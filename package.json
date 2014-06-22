@@ -1,0 +1,20 @@
+{
+  "name": "bauer-factory",
+  "version": "1.0.0",
+  "description": "General utilities for nodejs",
+  "keywords": ["class","method","type","extend","clone","signature","function","object","create"],
+  "license": "MIT",
+  "homepage": "http://yneves.com/",
+  "author": {
+    "name": "Yuri Neves Silveira",
+    "url": "http://yneves.com/",
+    "email": "npm@yneves.com"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "mocha": "0.3.x"
+  },
+  "main": "factory.js"	
+}
