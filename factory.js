@@ -216,11 +216,6 @@ factory.class = function(methods) {
 			cls.prototype[name] = factory.method(methods[name]);
 		}
 	}
-	for (var name in methods) {
-		if (name != "constructor" && name != "inherits") {
-			cls.prototype[name] = factory.method(methods[name]);
-		}
-	}
 	return cls;
 }
 
