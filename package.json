@@ -1,20 +1,25 @@
 {
   "name": "bauer-factory",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "General utilities for nodejs",
   "keywords": ["class","method","type","extend","clone","signature","function","object","create"],
   "license": "MIT",
-  "homepage": "http://yneves.com/",
+  "homepage": "https://github.com/yneves/node-bauer-factory",
   "author": {
     "name": "Yuri Neves Silveira",
     "url": "http://yneves.com/",
     "email": "npm@yneves.com"
   },
+  "repository":{
+    "type": "git",
+    "url": "https://github.com/yneves/node-bauer-factory.git"
+  },
   "scripts": {
     "test": "mocha"
   },
   "devDependencies": {
-    "mocha": "0.3.x"
+    "q": ">1.0.0",
+    "mocha": ">1.0.0"
   },
   "main": "factory.js"	
 }
