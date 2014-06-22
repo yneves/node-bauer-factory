@@ -1,4 +1,4 @@
-node-yns-factory
+node-bauer-factory
 ================
 
-General utilities for nodejs
+General utilities for nodejs.
