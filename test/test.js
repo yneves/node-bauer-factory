@@ -173,6 +173,26 @@ describe("Factory",function() {
 		assert.strictEqual(lib.factory.isDate(new Error("error")),false);
 	});
 
+	// @isBoolean
+	it("isBoolean",function() {
+		assert.strictEqual(lib.factory.isBoolean("string"),false);
+		assert.strictEqual(lib.factory.isBoolean(123),false);
+		assert.strictEqual(lib.factory.isBoolean(new RegExp("\w")),false);
+		assert.strictEqual(lib.factory.isBoolean(/\w/),false);
+		assert.strictEqual(lib.factory.isBoolean(new Date()),false);
+		assert.strictEqual(lib.factory.isBoolean([1,2,3]),false);
+		assert.strictEqual(lib.factory.isBoolean(arguments),false);
+		assert.strictEqual(lib.factory.isBoolean(true),true);
+		assert.strictEqual(lib.factory.isBoolean(false),true);
+		assert.strictEqual(lib.factory.isBoolean(),false);
+		assert.strictEqual(lib.factory.isBoolean(null),false);
+		assert.strictEqual(lib.factory.isBoolean(new Object()),false);
+		assert.strictEqual(lib.factory.isBoolean({a:"b",b:function(){},c:[]}),false);
+		assert.strictEqual(lib.factory.isBoolean(function(){}),false);
+		assert.strictEqual(lib.factory.isBoolean(lib.Q("a")),false);
+		assert.strictEqual(lib.factory.isBoolean(new Error("error")),false);
+	});
+
 	// @isArguments
 	it("isArguments",function() {
 		assert.strictEqual(lib.factory.isArguments("string"),false);
@@ -288,6 +308,7 @@ describe("Factory",function() {
 		assert.deepEqual(method(["a","b"],["c"],["d","e"]),["a","b","c","d","e"]);
 		assert.deepEqual(method({a:"",b:""},{c:""},{d:"",e:""}),["a","b","c","d","e"]);
 		assert.deepEqual(method("string",function(ch){return ch.charCodeAt(0)},/s|t/g),"115116ring");
+		assert.throws(function() { method([]) },ReferenceError);
 	});
 
 	// @class

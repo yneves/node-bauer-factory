@@ -81,7 +81,8 @@ factory.method = function(signatures) {
 				return signatures[arguments.length].apply(this,arguments);
 			} else if (signatures._) {
 				return signatures._.apply(this,arguments);
-
+			} else {
+				throw new ReferenceError("signature not found");
 			}
 		}
 	} else if (type == "error") {
@@ -150,7 +151,7 @@ factory.clone = function(arg) {
 		var clone = {};
 		for (var key in arg) {
 			var valtype = factory.type(arg[key]);
-			if (valtype == "object" || valtype == "array" || "function") {
+			if (valtype == "object" || valtype == "array") {
 				clone[key] = factory.clone(arg[key]);
 			} else {
 				clone[key] = arg[key];
@@ -260,6 +261,9 @@ factory.extend({
 
 	// .isRegExp(arg)
 	isRegExp: function(arg) { return factory.type(arg) == "regexp" },
+
+	// .isBoolean(arg)
+	isBoolean: function(arg) { return factory.type(arg) == "boolean" },
 
 	// .isFunction(arg)
 	isFunction: function(arg) { return factory.type(arg) == "function" },
