@@ -1,6 +1,6 @@
 {
   "name": "bauer-factory",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "General utilities for nodejs",
   "keywords": ["class","method","type","extend","clone","signature","function","object","create"],
   "license": "MIT",
