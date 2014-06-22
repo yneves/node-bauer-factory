@@ -206,8 +206,15 @@ factory.class = function(methods) {
 		}
 		constructor.apply(this,arguments);
 	};
-	for (var i = 0; i < inherits.length; i++) {
-		lib.util.inherits(cls,inherits[i]);
+	if (inherits.length == 1) {
+		lib.util.inherits(cls,inherits[0]);
+	} else if (inherits.length > 1) {
+		throw new Error("multiple inheritance not allowed");
+	}
+	for (var name in methods) {
+		if (name != "constructor" && name != "inherits") {
+			cls.prototype[name] = factory.method(methods[name]);
+		}
 	}
 	for (var name in methods) {
 		if (name != "constructor" && name != "inherits") {

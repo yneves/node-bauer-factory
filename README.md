@@ -222,7 +222,7 @@ var Bauer = factory.class({
 
 	// requires 'events' and inherits EventEmitter from it
 	// also accepts functions
-	inherits: ["events.EventEmitter"],
+	inherits: "events.EventEmitter",
 
 	// called when new Bauer() is executed
 	// it can also be routed by factory.method if needed
@@ -263,7 +263,7 @@ var jack = factory.object({
 
 	// requires 'events' and inherits EventEmitter from it
 	// also accepts functions
-	inherits: ["events.EventEmitter"],
+	inherits: "events.EventEmitter",
 
 	// called when new Bauer() is executed
 	// it can also be routed by factory.method if needed
