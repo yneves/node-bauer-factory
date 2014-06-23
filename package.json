@@ -18,8 +18,8 @@
     "test": "mocha"
   },
   "devDependencies": {
-    "q": ">1.0.0",
-    "mocha": ">1.0.0"
+    "q": ">=1.0.0",
+    "mocha": ">=1.0.0"
   },
   "main": "factory.js"	
 }
