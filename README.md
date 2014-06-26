@@ -17,7 +17,10 @@ var factory = require("bauer-factory");
 
 ## .type
 
-Returned value can be string, number, boolean, date, regexp, error, array, object, arguments, undefined, function or promise. Beware that null is considered to be undefined despite it is an object.
+Returned value can be string, number, boolean, date, regexp, error, array, object, arguments, undefined, function or promise. 
+
+* Null is considered to be of type `undefined`.
+* Objects with `.then` method are considered to be of type `promise`. 
 
 ```js
 // returns type of given argument

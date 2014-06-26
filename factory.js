@@ -29,7 +29,7 @@ factory.type = function(arg) {
 			type = "date";
 		} else if (arg instanceof RegExp) {
 			type = "regexp";
-		} else if (typeof arg.promiseDispatch == "function" && typeof arg.inspect == "function") {
+		} else if (typeof arg.then == "function") {
 			type = "promise";
 		} else if (arg && arg.toString && arg.toString() == "[object Arguments]") {
 			type = "arguments";
