@@ -29,8 +29,6 @@ factory.type = function(arg) {
 			type = "date";
 		} else if (arg instanceof RegExp) {
 			type = "regexp";
-		} else if (typeof arg.then == "function") {
-			type = "promise";
 		} else if (arg && arg.toString && arg.toString() == "[object Arguments]") {
 			type = "arguments";
 		}
@@ -275,9 +273,6 @@ factory.extend({
 
 	// .isFunction(arg)
 	isFunction: function(arg) { return factory.type(arg) == "function" },
-
-	// .isPromise(arg)
-	isPromise: function(arg) { return factory.type(arg) == "promise" },
 
 	// .isArguments(arg)
 	isArguments: function(arg) { return factory.type(arg) == "arguments" },

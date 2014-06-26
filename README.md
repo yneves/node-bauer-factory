@@ -20,7 +20,6 @@ var factory = require("bauer-factory");
 Returned value can be string, number, boolean, date, regexp, error, array, object, arguments, undefined, function or promise. 
 
 * Null is considered to be of type `undefined`.
-* Objects with `.then` method are considered to be of type `promise`. 
 
 ```js
 // returns type of given argument
@@ -105,14 +104,6 @@ factory.type(arg) == "regexp"
 factory.isFunction(arg) 
 // same as
 factory.type(arg) == "function"
-```
-
-## .isPromise
-
-```js
-factory.isPromise(arg) 
-// same as
-factory.type(arg) == "promise"
 ```
 
 ## .isArguments

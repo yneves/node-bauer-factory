@@ -35,7 +35,6 @@ describe("Factory",function() {
 		assert.strictEqual(lib.factory.type(new Object()),"object");
 		assert.strictEqual(lib.factory.type({a:"b",b:function(){},c:[]}),"object");
 		assert.strictEqual(lib.factory.type(function(){}),"function");
-		assert.strictEqual(lib.factory.type(lib.Q("a")),"promise");
 		assert.strictEqual(lib.factory.type(new Error()),"error");
 	});
 
@@ -95,7 +94,7 @@ describe("Factory",function() {
 		assert.strictEqual(lib.factory.isObject(new Object()),true);
 		assert.strictEqual(lib.factory.isObject({a:"b",b:function(){},c:[]}),true);
 		assert.strictEqual(lib.factory.isObject(function(){}),false);
-		assert.strictEqual(lib.factory.isObject(lib.Q("a")),false);
+		assert.strictEqual(lib.factory.isObject(lib.Q("a")),true);
 		assert.strictEqual(lib.factory.isObject(new Error("error")),false);
 	});
 
@@ -237,26 +236,6 @@ describe("Factory",function() {
 		assert.strictEqual(lib.factory.isNull(function(){}),false);
 		assert.strictEqual(lib.factory.isNull(lib.Q("a")),false);
 		assert.strictEqual(lib.factory.isNull(new Error("error")),false);
-	});
-
-	// @isPromise
-	it("isPromise",function() {
-		assert.strictEqual(lib.factory.isPromise("string"),false);
-		assert.strictEqual(lib.factory.isPromise(123),false);
-		assert.strictEqual(lib.factory.isPromise(new RegExp("\w")),false);
-		assert.strictEqual(lib.factory.isPromise(/\w/),false);
-		assert.strictEqual(lib.factory.isPromise(new Date()),false);
-		assert.strictEqual(lib.factory.isPromise([1,2,3]),false);
-		assert.strictEqual(lib.factory.isPromise(arguments),false);
-		assert.strictEqual(lib.factory.isPromise(true),false);
-		assert.strictEqual(lib.factory.isPromise(false),false);
-		assert.strictEqual(lib.factory.isPromise(),false);
-		assert.strictEqual(lib.factory.isPromise(null),false);
-		assert.strictEqual(lib.factory.isPromise(new Object()),false);
-		assert.strictEqual(lib.factory.isPromise({a:"b",b:function(){},c:[]}),false);
-		assert.strictEqual(lib.factory.isPromise(function(){}),false);
-		assert.strictEqual(lib.factory.isPromise(lib.Q("a")),true);
-		assert.strictEqual(lib.factory.isPromise(new Error("error")),false);
 	});
 
 	// @toArray
