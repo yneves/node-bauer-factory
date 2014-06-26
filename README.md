@@ -17,7 +17,7 @@ var factory = require("bauer-factory");
 
 ## .type
 
-Returned value can be string, number, boolean, date, regexp, error, array, object, arguments, undefined, function or promise. 
+Returned value can be string, number, boolean, date, regexp, error, array, object, arguments, undefined or function. 
 
 * Null is considered to be of type `undefined`.
 
