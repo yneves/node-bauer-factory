@@ -232,7 +232,7 @@ var Bauer = factory.class({
 	tortureSuspects: {
 	},
 	
-	doWhateverItsNecessary: function() {},
+	doWhateverIsNecessary: function() {},
 
 });
 ```
@@ -246,7 +246,7 @@ jack.killTerrorists();
 
 jack.tortureSuspects();
 
-jack.doWhateverItsNecessary();
+jack.doWhateverIsNecessary();
 ```
 
 ## .object
@@ -277,7 +277,7 @@ var jack = factory.object({
 		2: function() {},
 	},
 
-	doWhateverItsNecessary: function() {},
+	doWhateverIsNecessary: function() {},
 
 });
 ```
