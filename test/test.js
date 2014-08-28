@@ -9,7 +9,6 @@
 
 var lib = {
 	factory: require("../"),
-	Q: require("q"),
 };
 
 var assert = require("assert");
@@ -54,7 +53,6 @@ describe("Factory",function() {
 		assert.strictEqual(lib.factory.isString(new Object()),false);
 		assert.strictEqual(lib.factory.isString({a:"b",b:function(){},c:[]}),false);
 		assert.strictEqual(lib.factory.isString(function(){}),false);
-		assert.strictEqual(lib.factory.isString(lib.Q("a")),false);
 		assert.strictEqual(lib.factory.isString(new Error("error")),false);
 	});
 
@@ -74,7 +72,6 @@ describe("Factory",function() {
 		assert.strictEqual(lib.factory.isNumber(new Object()),false);
 		assert.strictEqual(lib.factory.isNumber({a:"b",b:function(){},c:[]}),false);
 		assert.strictEqual(lib.factory.isNumber(function(){}),false);
-		assert.strictEqual(lib.factory.isNumber(lib.Q("a")),false);
 		assert.strictEqual(lib.factory.isNumber(new Error("error")),false);
 	});
 
@@ -94,7 +91,6 @@ describe("Factory",function() {
 		assert.strictEqual(lib.factory.isObject(new Object()),true);
 		assert.strictEqual(lib.factory.isObject({a:"b",b:function(){},c:[]}),true);
 		assert.strictEqual(lib.factory.isObject(function(){}),false);
-		assert.strictEqual(lib.factory.isObject(lib.Q("a")),true);
 		assert.strictEqual(lib.factory.isObject(new Error("error")),false);
 	});
 
@@ -114,7 +110,6 @@ describe("Factory",function() {
 		assert.strictEqual(lib.factory.isFunction(new Object()),false);
 		assert.strictEqual(lib.factory.isFunction({a:"b",b:function(){},c:[]}),false);
 		assert.strictEqual(lib.factory.isFunction(function(){}),true);
-		assert.strictEqual(lib.factory.isFunction(lib.Q("a")),false);
 		assert.strictEqual(lib.factory.isFunction(new Error("error")),false);
 	});
 
@@ -134,7 +129,6 @@ describe("Factory",function() {
 		assert.strictEqual(lib.factory.isRegExp(new Object()),false);
 		assert.strictEqual(lib.factory.isRegExp({a:"b",b:function(){},c:[]}),false);
 		assert.strictEqual(lib.factory.isRegExp(function(){}),false);
-		assert.strictEqual(lib.factory.isRegExp(lib.Q("a")),false);
 		assert.strictEqual(lib.factory.isRegExp(new Error("error")),false);
 	});
 
@@ -154,7 +148,6 @@ describe("Factory",function() {
 		assert.strictEqual(lib.factory.isArray(new Object()),false);
 		assert.strictEqual(lib.factory.isArray({a:"b",b:function(){},c:[]}),false);
 		assert.strictEqual(lib.factory.isArray(function(){}),false);
-		assert.strictEqual(lib.factory.isArray(lib.Q("a")),false);
 		assert.strictEqual(lib.factory.isArray(new Error("error")),false);
 	});
 
@@ -174,7 +167,6 @@ describe("Factory",function() {
 		assert.strictEqual(lib.factory.isDate(new Object()),false);
 		assert.strictEqual(lib.factory.isDate({a:"b",b:function(){},c:[]}),false);
 		assert.strictEqual(lib.factory.isDate(function(){}),false);
-		assert.strictEqual(lib.factory.isDate(lib.Q("a")),false);
 		assert.strictEqual(lib.factory.isDate(new Error("error")),false);
 	});
 
@@ -194,7 +186,6 @@ describe("Factory",function() {
 		assert.strictEqual(lib.factory.isBoolean(new Object()),false);
 		assert.strictEqual(lib.factory.isBoolean({a:"b",b:function(){},c:[]}),false);
 		assert.strictEqual(lib.factory.isBoolean(function(){}),false);
-		assert.strictEqual(lib.factory.isBoolean(lib.Q("a")),false);
 		assert.strictEqual(lib.factory.isBoolean(new Error("error")),false);
 	});
 
@@ -214,7 +205,6 @@ describe("Factory",function() {
 		assert.strictEqual(lib.factory.isArguments(new Object()),false);
 		assert.strictEqual(lib.factory.isArguments({a:"b",b:function(){},c:[]}),false);
 		assert.strictEqual(lib.factory.isArguments(function(){}),false);
-		assert.strictEqual(lib.factory.isArguments(lib.Q("a")),false);
 		assert.strictEqual(lib.factory.isArguments(new Error("error")),false);
 	});
 
@@ -234,7 +224,6 @@ describe("Factory",function() {
 		assert.strictEqual(lib.factory.isNull(new Object()),false);
 		assert.strictEqual(lib.factory.isNull({a:"b",b:function(){},c:[]}),false);
 		assert.strictEqual(lib.factory.isNull(function(){}),false);
-		assert.strictEqual(lib.factory.isNull(lib.Q("a")),false);
 		assert.strictEqual(lib.factory.isNull(new Error("error")),false);
 	});
 
@@ -302,7 +291,7 @@ describe("Factory",function() {
 			inherits: "events.EventEmitter",
 			constructor: function(a,b) {
 				this._a = a;
-				this._b = b; 
+				this._b = b;
 			},
 			one: function() { return this._a },
 			two: function() { return this._b },
@@ -331,7 +320,7 @@ describe("Factory",function() {
 			inherits: "events.EventEmitter",
 			constructor: function() {
 				this._a = 1;
-				this._b = 2; 
+				this._b = 2;
 			},
 			one: function() { return this._a },
 			two: function() { return this._b },
@@ -372,7 +361,7 @@ describe("Factory",function() {
 			inherits: "events.EventEmitter",
 			constructor: function(a,b) {
 				this._a = a;
-				this._b = b; 
+				this._b = b;
 			},
 		});
 		lib.factory.extend(cls,{
@@ -429,6 +418,24 @@ describe("Factory",function() {
 		var method = lib.factory.method(error);
 		assert.throws(method,/testing factory/);
 	});
+
+	// @guid
+	it("guid",function() {
+		var repeat = 0;
+		var unique = {};
+		for (var i = 0; i < 100000; i++) {
+			var guid = lib.factory.guid();
+			assert.ok(/[a-z0-9]{32}/.test(guid));
+			if (unique[guid]) {
+				repeat++;
+			} else {
+				unique[guid] = true;
+			}
+		}
+		assert.equal(repeat,0);
+	});
+
+
 });
 
 // - -------------------------------------------------------------------- - //
