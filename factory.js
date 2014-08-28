@@ -281,6 +281,21 @@ factory.extend({
 
 // - -------------------------------------------------------------------- - //
 
-module.exports = factory;
+factory.extend({
+
+	guid: function() {
+	  var uid = "";
+	  for (var i = 0; i < 8 ; i++) {
+	    uid += Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+	  }
+	  return uid;
+	},
+
+
+});
+
+// - -------------------------------------------------------------------- - //
+
+module.exports = exports = factory;
 
 // - -------------------------------------------------------------------- - //
