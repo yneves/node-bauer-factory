@@ -17,7 +17,7 @@ var factory = require("bauer-factory");
 
 ## .type
 
-Returned value can be string, number, boolean, date, regexp, error, array, object, arguments, undefined or function. 
+Returned value can be string, number, boolean, date, regexp, error, array, object, arguments, undefined or function.
 
 * Null is considered to be of type `undefined`.
 
@@ -37,7 +37,7 @@ factory.type(arg) == "undefined"
 ## .isDate
 
 ```js
-factory.isDate(arg) 
+factory.isDate(arg)
 // same as
 factory.type(arg) == "date"
 ```
@@ -45,7 +45,7 @@ factory.type(arg) == "date"
 ## .isError
 
 ```js
-factory.isError(arg) 
+factory.isError(arg)
 // same as
 factory.type(arg) == "error"
 ```
@@ -53,7 +53,7 @@ factory.type(arg) == "error"
 ## .isBoolean
 
 ```js
-factory.isBoolean(arg) 
+factory.isBoolean(arg)
 // same as
 factory.type(arg) == "boolean"
 ```
@@ -61,7 +61,7 @@ factory.type(arg) == "boolean"
 ## .isArray
 
 ```js
-factory.isArray(arg) 
+factory.isArray(arg)
 // same as
 factory.type(arg) == "array"
 ```
@@ -69,7 +69,7 @@ factory.type(arg) == "array"
 ## .isNumber
 
 ```js
-factory.isNumber(arg) 
+factory.isNumber(arg)
 // same as
 factory.type(arg) == "number"
 ```
@@ -77,7 +77,7 @@ factory.type(arg) == "number"
 ## .isString
 
 ```js
-factory.isString(arg) 
+factory.isString(arg)
 // same as
 factory.type(arg) == "string"
 ```
@@ -85,7 +85,7 @@ factory.type(arg) == "string"
 ## .isObject
 
 ```js
-factory.isObject(arg) 
+factory.isObject(arg)
 // same as
 factory.type(arg) == "object"
 ```
@@ -93,7 +93,7 @@ factory.type(arg) == "object"
 ## .isRegExp
 
 ```js
-factory.isRegExp(arg) 
+factory.isRegExp(arg)
 // same as
 factory.type(arg) == "regexp"
 ```
@@ -101,7 +101,7 @@ factory.type(arg) == "regexp"
 ## .isFunction
 
 ```js
-factory.isFunction(arg) 
+factory.isFunction(arg)
 // same as
 factory.type(arg) == "function"
 ```
@@ -109,7 +109,7 @@ factory.type(arg) == "function"
 ## .isArguments
 
 ```js
-factory.isArguments(arg) 
+factory.isArguments(arg)
 // same as
 factory.type(arg) == "arguments"
 ```
@@ -130,21 +130,21 @@ Performs a superficial extension on objects or classes.
 
 ```js
 // extends the original object and returns it
-factory.extend(original,object0,object1,object2) 
+factory.extend(original,object0,object1,object2)
 ```
 
 ```js
 // calling with one argument extends factory itself
-// methods is an object having key as the method name 
+// methods is an object having key as the method name
 // value is passed through factory.method
-factory.extend(methods) 
+factory.extend(methods)
 ```
 
 ```js
 // calling with a function as first argument extends its prototype
-// methods is an object having key as the method name 
+// methods is an object having key as the method name
 // value is passed through factory.method
-factory.extend(class,methods) 
+factory.extend(class,methods)
 ```
 
 ## .clone
@@ -152,8 +152,8 @@ factory.extend(class,methods)
 Returns an equally deep copy of given argument. Works with arrays and objects, values of any other type are bypassed.  
 
 ```js
-// deepEqual && notStrictDeepEqual 
-factory.clone(arg) 
+// deepEqual && notStrictDeepEqual
+factory.clone(arg)
 ```
 
 ## .method
@@ -186,7 +186,7 @@ var func = factory.method({
 	5: { // executed if called with five arguments
 		sssss: function() {}, // five strings
 		assss: function() {}, // one array and four strings
-	}, 
+	},
 	1: function(arg) {}, // executed if called with one argument
 });
 ```
@@ -228,10 +228,10 @@ var Bauer = factory.class({
 	// methods are created by factory.method
 	killTerrorists: {
 	},
-	
+
 	tortureSuspects: {
 	},
-	
+
 	doWhateverIsNecessary: function() {},
 
 });
@@ -280,4 +280,12 @@ var jack = factory.object({
 	doWhateverIsNecessary: function() {},
 
 });
+```
+
+## .guid
+
+Generates a globally unique id.
+
+```js
+var uid = factory.guid();
 ```
