@@ -14,11 +14,171 @@ var lib = {
 var factory = {};
 
 // - -------------------------------------------------------------------- - //
+// - stuff
+
+function createFunction(method,signature) {
+	var methodType = factory.type(method);
+	if (methodType === "function") {
+		return method;
+	} else if (methodType === "string") {
+		var methodArgs = [];
+		if (/[abofdresnup]/.test(signature)) {
+			var count = {};
+			var index = {};
+			var types = signature.split("");
+			types.forEach(function(arg) {
+				if (count[arg]) {
+					count[arg]++;
+				} else {
+					count[arg] = 1;
+				}
+				index[arg] = 0;
+			});
+			types.forEach(function(arg) {
+				if (count[arg] > 1) {
+					methodArgs.push(arg+""+index[arg]);
+					index[arg]++;
+				} else {
+					methodArgs.push(arg);
+				}
+			});
+		}
+		methodArgs.push(method);
+		return Function.constructor.apply(Function,methodArgs);
+	} else {
+		return factory.method(method);
+	}
+}
+
+function createExpression(signature) {
+	var signLength = signature.length;
+	var exprList = [];
+	for (var i = 0; i < signLength; i++) {
+		var argType = signature[i];
+		var argument = "arguments[" + i + "]";
+		switch (argType) {
+			case "f":
+				exprList.push(argument + " instanceof Function");
+				break;
+			case "a":
+				exprList.push(argument + " instanceof Array");
+				break;
+			case "b":
+				exprList.push([argument + " instanceof Boolean","typeof " + argument + " === 'boolean'"]);
+				break;
+			case "s":
+				exprList.push([argument + " instanceof String","typeof " + argument + " === 'string'"]);
+				break;
+			case "n":
+				exprList.push([argument + " instanceof Number","typeof " + argument + " === 'number'"]);
+				break;
+			case "d":
+				exprList.push(argument + " instanceof Date");
+				break;
+			case "e":
+				exprList.push(argument + " instanceof Error");
+				break;
+			case "r":
+				exprList.push(argument + " instanceof RegExp");
+				break;
+			case "u":
+				exprList.push([argument + " === null","typeof " + argument + " === 'undefined'"]);
+				break;
+			case "o":
+				exprList.push(argument + " instanceof Object");
+				break;
+		}
+	}
+	var exprLength = exprList.length;
+	var exprText = "if (";
+	for (var i = 0; i < exprLength; i++) {
+		if (i > 0) {
+			exprText += " && ";
+		}
+		if (exprList[i] instanceof Array) {
+			exprText += "(" + exprList[i].join(" || ") + ")";
+		} else {
+			exprText +=  exprList[i];
+		}
+	}
+	exprText += ")";
+	return exprText;
+}
+
+function sortSignatures(a,b) {
+	if (a.type === "default") {
+		return 1;
+	} else if (a.length > b.length) {
+		return -1;
+	} else if (a.length < b.length) {
+		return 1;
+	} else if (a.type === "length" && b.type === "type") {
+		return 1;
+	} else if (a.type === "type" && b.type === "length") {
+		return -1;
+	} else {
+		return 0;
+	}
+}
+
+function createSignatures(signatures) {
+	var signs = [];
+	var methods = [];
+	var keys = Object.keys(signatures);
+	var keysLength = keys.length;
+	for (var s = 0; s < keysLength; s++) {
+		var signature = keys[s];
+		var method = createFunction(signatures[signature],signature);
+		var methodIndex = methods.length;
+		methods.push(method);
+		var execText = "return methods[" + methodIndex + "].apply(this,arguments)";
+		if (/^[0-9]+$/.test(signature)) {
+			signs.push({
+				length: signature,
+				type: "length",
+				code: execText,
+			});
+		} else if (/^[fabsnderuo]+$/.test(signature)) {
+			signs.push({
+				length: signature.length,
+				type: "type",
+				code: createExpression(signature) + " { " + execText + " }",
+			});
+		} else if (signature === "_") {
+			signs.push({
+				type: "default",
+				code: execText,
+			});
+		}
+	}
+	var code = [
+		"return function() { ",
+		"var len = arguments.length;",
+	];
+	var lastLength;
+	signs.sort(sortSignatures).forEach(function(sign) {
+		if (lastLength === sign.length) {
+		} else {
+			if (lastLength) {
+				code.push("}");
+			}
+			code.push("if (len === " + sign.length + ") {");
+		}
+		code.push(sign.code);
+		lastLength = sign.length;
+	});
+	if (lastLength) {
+		code.push("}");
+	}
+	code.push("throw new ReferenceError('signature not found');","}");
+	return new Function("methods",code.join("\n"))(methods);
+}
+// - -------------------------------------------------------------------- - //
 
 // .type(arg)
 factory.type = function(arg) {
 	var type = typeof arg;
-	if (type == "object") {
+	if (type === "object") {
 		if (arg === null) {
 			type = "undefined";
 		} else if (arg instanceof Error) {
@@ -29,8 +189,17 @@ factory.type = function(arg) {
 			type = "date";
 		} else if (arg instanceof RegExp) {
 			type = "regexp";
-		} else if (arg && arg.toString && arg.toString() == "[object Arguments]") {
-			type = "arguments";
+		} else if (arg instanceof String) {
+			type = "string";
+		} else if (arg instanceof Number) {
+			type = "number";
+		} else if (arg instanceof Boolean) {
+			type = "boolean";
+		} else {
+			var toString = Object.prototype.toString.call(arg);
+			if (toString === "[object Arguments]") {
+				type = "arguments";
+			}
 		}
 	}
 	return type;
@@ -41,61 +210,15 @@ factory.type = function(arg) {
 // .method(signatures);
 factory.method = function(signatures) {
 	var type = factory.type(signatures);
-	if (type == "object") {
-		for (var signature in signatures) {
-			var stype = factory.type(signatures[signature]);
-			if (stype == "string") {
-				var args = [];
-				if (/[abofdresnup]/.test(signature)) {
-					var count = {};
-					var index = {};
-					var types = signature.split("");
-					types.forEach(function(arg) {
-						if (count[arg]) {
-							count[arg]++;
-						} else {
-							count[arg] = 1;
-						}
-						index[arg] = 0;
-					});
-					types.forEach(function(arg) {
-						if (count[arg] > 1) {
-							args.push(arg+""+index[arg]);
-							index[arg]++;
-						} else {
-							args.push(arg);
-						}
-					});
-				}
-				args.push(signatures[signature]);
-				signatures[signature] = Function.constructor.apply(Function,args);
-			} else if (stype != "function") {
-				signatures[signature] = factory.method(signatures[signature]);
-			}
-		}
-		return function() {
-			var signature = "";
-			for (var i = 0; i < arguments.length; i++) {
-				var type = factory.type(arguments[i]);
-				signature += type.substr(0,1);
-			}
-			if (signatures[signature]) {
-				return signatures[signature].apply(this,arguments);
-			} else if (signatures[arguments.length]) {
-				return signatures[arguments.length].apply(this,arguments);
-			} else if (signatures._) {
-				return signatures._.apply(this,arguments);
-			} else {
-				throw new ReferenceError("signature not found");
-			}
-		}
-	} else if (type == "error") {
+	if (type === "object") {
+		return createSignatures(signatures);
+	} else if (type === "error") {
 		return function() { throw signatures; }
-	} else if (type == "function") {
+	} else if (type === "function") {
 		return signatures;
-	} else if (type == "string") {
+	} else if (type === "string") {
 		return new Function(signatures);
-	} else if (type == "undefined") {
+	} else if (type === "undefined") {
 		return function() {};
 	}
 };

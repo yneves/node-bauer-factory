@@ -20,6 +20,9 @@ describe("Factory",function() {
 
 	// @type
 	it("type",function() {
+
+	assert.strictEqual(lib.factory.type(new String("string")),"string");
+
 		assert.strictEqual(lib.factory.type("string"),"string");
 		assert.strictEqual(lib.factory.type(123),"number");
 		assert.strictEqual(lib.factory.type(new RegExp("\w")),"regexp");
