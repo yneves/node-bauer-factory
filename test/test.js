@@ -20,9 +20,7 @@ describe("Factory",function() {
 
 	// @type
 	it("type",function() {
-
-	assert.strictEqual(lib.factory.type(new String("string")),"string");
-
+		assert.strictEqual(lib.factory.type(new String("string")),"string");
 		assert.strictEqual(lib.factory.type("string"),"string");
 		assert.strictEqual(lib.factory.type(123),"number");
 		assert.strictEqual(lib.factory.type(new RegExp("\w")),"regexp");
@@ -42,6 +40,7 @@ describe("Factory",function() {
 
 	// @isString
 	it("isString",function() {
+		assert.strictEqual(lib.factory.isString(new String("string")),true);
 		assert.strictEqual(lib.factory.isString("string"),true);
 		assert.strictEqual(lib.factory.isString(123),false);
 		assert.strictEqual(lib.factory.isString(new RegExp("\w")),false);
@@ -62,6 +61,7 @@ describe("Factory",function() {
 	// @isNumber
 	it("isNumber",function() {
 		assert.strictEqual(lib.factory.isNumber("string"),false);
+		assert.strictEqual(lib.factory.isNumber(new Number(123)),true);
 		assert.strictEqual(lib.factory.isNumber(123),true);
 		assert.strictEqual(lib.factory.isNumber(new RegExp("\w")),false);
 		assert.strictEqual(lib.factory.isNumber(/\w/),false);
@@ -177,6 +177,7 @@ describe("Factory",function() {
 	it("isBoolean",function() {
 		assert.strictEqual(lib.factory.isBoolean("string"),false);
 		assert.strictEqual(lib.factory.isBoolean(123),false);
+		assert.strictEqual(lib.factory.isBoolean(new Boolean()),true);
 		assert.strictEqual(lib.factory.isBoolean(new RegExp("\w")),false);
 		assert.strictEqual(lib.factory.isBoolean(/\w/),false);
 		assert.strictEqual(lib.factory.isBoolean(new Date()),false);
@@ -273,6 +274,50 @@ describe("Factory",function() {
 				},
 			},
 		});
+		assert.deepEqual(method(),"zero arguments");
+		assert.deepEqual(method(null,1,"a",{},[]),"five arguments");
+		assert.deepEqual(method("string"),"string");
+		assert.deepEqual(method("string","string"),["string","string"]);
+		assert.deepEqual(method(10),100);
+		assert.deepEqual(method(10,5),5);
+		assert.deepEqual(method(true),false);
+		assert.deepEqual(method(true,false),false);
+		assert.deepEqual(method(true,true),true);
+		assert.deepEqual(method(["a","b"],["c"],["d","e"]),["a","b","c","d","e"]);
+		assert.deepEqual(method({a:"",b:""},{c:""},{d:"",e:""}),["a","b","c","d","e"]);
+		assert.deepEqual(method("string",function(ch){return ch.charCodeAt(0)},/s|t/g),"115116ring");
+		assert.throws(function() { method([]) },ReferenceError);
+	});
+
+	// @method-embed
+	it("method-embed",function() {
+		var method = lib.factory.method({
+			0: "return 'zero arguments'",
+			5: "return 'five arguments'",
+			s: "return s",
+			ss: "return [s0,s1]",
+			n: "return n * 10",
+			nn: "return n0 - n1",
+			b: "return !b",
+			bb: "return b0 && b1",
+			aaa: function(a0,a1,a2) {
+				var a = [];
+				a0.forEach(function(e) { a.push(e) });
+				a1.forEach(function(e) { a.push(e) });
+				a2.forEach(function(e) { a.push(e) });
+				return a;
+			},
+			ooo: function(o0,o1,o2) {
+				var a = [];
+				Object.keys(o0).forEach(function(e) { a.push(e) });
+				Object.keys(o1).forEach(function(e) { a.push(e) });
+				Object.keys(o2).forEach(function(e) { a.push(e) });
+				return a;
+			},
+			sfr: function(str,fn,re) {
+				return str.replace(re,fn);
+			},
+		},true);
 		assert.deepEqual(method(),"zero arguments");
 		assert.deepEqual(method(null,1,"a",{},[]),"five arguments");
 		assert.deepEqual(method("string"),"string");
@@ -426,7 +471,7 @@ describe("Factory",function() {
 	it("guid",function() {
 		var repeat = 0;
 		var unique = {};
-		for (var i = 0; i < 100000; i++) {
+		for (var i = 0; i < 10; i++) {
 			var guid = lib.factory.guid();
 			assert.ok(/[a-z0-9]{32}/.test(guid));
 			if (unique[guid]) {
@@ -437,7 +482,6 @@ describe("Factory",function() {
 		}
 		assert.equal(repeat,0);
 	});
-
 
 });
 

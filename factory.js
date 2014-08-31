@@ -22,157 +22,174 @@ function createFunction(method,signature) {
 		return method;
 	} else if (methodType === "string") {
 		var methodArgs = [];
-		if (/[abofdresnup]/.test(signature)) {
+		if (/^[fabsnderuo]+$/.test(signature)) {
 			var count = {};
 			var index = {};
-			var types = signature.split("");
-			types.forEach(function(arg) {
+			var signLength = signature.length;
+			for (var i = 0; i < signLength; i++) {
+				var arg = signature[i];
 				if (count[arg]) {
 					count[arg]++;
 				} else {
 					count[arg] = 1;
 				}
 				index[arg] = 0;
-			});
-			types.forEach(function(arg) {
+			}
+			for (var i = 0; i < signLength; i++) {
+				var arg = signature[i];
 				if (count[arg] > 1) {
-					methodArgs.push(arg+""+index[arg]);
+					methodArgs.push(arg + "" + index[arg]);
 					index[arg]++;
 				} else {
 					methodArgs.push(arg);
 				}
-			});
+			}
 		}
 		methodArgs.push(method);
 		return Function.constructor.apply(Function,methodArgs);
+	} else if (methodType === "error") {
+		return function() { throw method; };
+	} else if (methodType === "object") {
+		return createMethod(method);
+	} else if (methodType === "undefined") {
+		return function() {};
+	}
+}
+
+function getFunctionCode(method) {
+	var methodText = method.toString();
+	var methodWithArgs = methodText.match(/function [\w]*\(([\w\,\s]+)\)\s*/);
+	if (methodWithArgs && methodWithArgs[1]) {
+		var methodCode = methodText.substr(methodWithArgs[0].length).trim().replace(/^\{|\}$/g,"").trim();
+		var methodArgs = methodWithArgs[1].split(/\s*,\s*/).map(function(arg,idx) {
+			return "var " + arg + " = arguments[" + idx + "];";
+		});
+		return methodArgs.join("\n") + "\n" + methodCode + ";";
 	} else {
-		return factory.method(method);
+		var methodWithoutArgs = methodText.match(/function [\w]*\(\)\s*/);
+		if (methodWithoutArgs) {
+			var methodCode = methodText.substr(methodWithoutArgs[0].length).trim().replace(/^\{|\}$/g,"").trim();
+			return methodCode + ";";
+		}
 	}
 }
 
-function createExpression(signature) {
-	var signLength = signature.length;
-	var exprList = [];
-	for (var i = 0; i < signLength; i++) {
-		var argType = signature[i];
-		var argument = "arguments[" + i + "]";
-		switch (argType) {
-			case "f":
-				exprList.push(argument + " instanceof Function");
-				break;
-			case "a":
-				exprList.push(argument + " instanceof Array");
-				break;
-			case "b":
-				exprList.push([argument + " instanceof Boolean","typeof " + argument + " === 'boolean'"]);
-				break;
-			case "s":
-				exprList.push([argument + " instanceof String","typeof " + argument + " === 'string'"]);
-				break;
-			case "n":
-				exprList.push([argument + " instanceof Number","typeof " + argument + " === 'number'"]);
-				break;
-			case "d":
-				exprList.push(argument + " instanceof Date");
-				break;
-			case "e":
-				exprList.push(argument + " instanceof Error");
-				break;
-			case "r":
-				exprList.push(argument + " instanceof RegExp");
-				break;
-			case "u":
-				exprList.push([argument + " === null","typeof " + argument + " === 'undefined'"]);
-				break;
-			case "o":
-				exprList.push(argument + " instanceof Object");
-				break;
-		}
+function createExpression(type,index) {
+	var expression;
+	var argument = "arguments[" + index + "]";
+	switch (type) {
+		case "f":
+			expression = argument + " instanceof Function";
+			break;
+		case "a":
+			expression = argument + " instanceof Array";
+			break;
+		case "b":
+			expression = "(" + argument + " instanceof Boolean || typeof " + argument + " === 'boolean')";
+			break;
+		case "s":
+			expression = "(" + argument + " instanceof String || typeof " + argument + " === 'string')";
+			break;
+		case "n":
+			expression = "(" + argument + " instanceof Number || typeof " + argument + " === 'number')";
+			break;
+		case "d":
+			expression = argument + " instanceof Date";
+			break;
+		case "e":
+			expression = argument + " instanceof Error";
+			break;
+		case "r":
+			expression = argument + " instanceof RegExp";
+			break;
+		case "u":
+			expression = "(" + argument + " === null || typeof " + argument + " === 'undefined')";
+			break;
+		case "o":
+			expression = argument + " instanceof Object";
+			break;
+		case "_":
+			expression = "return methods[" + index + "].apply(this,arguments)";
+			break;
+		default:
+		 	expression = "len === " + type;
+			break;
 	}
-	var exprLength = exprList.length;
-	var exprText = "if (";
-	for (var i = 0; i < exprLength; i++) {
-		if (i > 0) {
-			exprText += " && ";
-		}
-		if (exprList[i] instanceof Array) {
-			exprText += "(" + exprList[i].join(" || ") + ")";
-		} else {
-			exprText +=  exprList[i];
-		}
-	}
-	exprText += ")";
-	return exprText;
+	return expression;
 }
 
-function sortSignatures(a,b) {
-	if (a.type === "default") {
-		return 1;
-	} else if (a.length > b.length) {
-		return -1;
-	} else if (a.length < b.length) {
-		return 1;
-	} else if (a.type === "length" && b.type === "type") {
-		return 1;
-	} else if (a.type === "type" && b.type === "length") {
-		return -1;
-	} else {
-		return 0;
+function recurseMethodTree(tree,index,methods) {
+	var code = [];
+	var keys = Object.keys(tree).sort();
+	var keysLength = keys.length;
+	for (var i = 0; i < keysLength; i++) {
+		var key = keys[i];
+		var val = tree[key];
+		var vtype = factory.type(val);
+		if (vtype === "object") {
+			code.push("if (" + createExpression(key,index) + ") {")
+			code.push.apply(code,recurseMethodTree(val,index + 1,methods));
+			code.push("}");
+		} else if (vtype === "number") {
+			if (methods) {
+				code.push(methods[val]);
+			} else {
+				code.push(createExpression(key,val));
+			}
+		}
 	}
+	return code;
 }
 
-function createSignatures(signatures) {
-	var signs = [];
+function createMethod(signatures,embedCode) {
+	var tree = {};
 	var methods = [];
 	var keys = Object.keys(signatures);
 	var keysLength = keys.length;
 	for (var s = 0; s < keysLength; s++) {
-		var signature = keys[s];
-		var method = createFunction(signatures[signature],signature);
+		var key = keys[s];
+		var method = createFunction(signatures[key],key);
 		var methodIndex = methods.length;
 		methods.push(method);
-		var execText = "return methods[" + methodIndex + "].apply(this,arguments)";
-		if (/^[0-9]+$/.test(signature)) {
-			signs.push({
-				length: signature,
-				type: "length",
-				code: execText,
-			});
-		} else if (/^[fabsnderuo]+$/.test(signature)) {
-			signs.push({
-				length: signature.length,
-				type: "type",
-				code: createExpression(signature) + " { " + execText + " }",
-			});
-		} else if (signature === "_") {
-			signs.push({
-				type: "default",
-				code: execText,
-			});
-		}
-	}
-	var code = [
-		"return function() { ",
-		"var len = arguments.length;",
-	];
-	var lastLength;
-	signs.sort(sortSignatures).forEach(function(sign) {
-		if (lastLength === sign.length) {
-		} else {
-			if (lastLength) {
-				code.push("}");
+		if (/^[0-9]+$/.test(key)) {
+			if (!tree[key]) {
+				tree[key] = {};
 			}
-			code.push("if (len === " + sign.length + ") {");
+			tree[key]._ = methodIndex;
+		} else if (/^[fabsnderuo]+$/.test(key)) {
+			var keyLength = key.length;
+			if (!tree[keyLength]) {
+				tree[keyLength] = {};
+			}
+			var treeWalk = tree[keyLength];
+			for (var i = 0; i < keyLength; i++) {
+				var type = key[i];
+				if (!treeWalk[type]) {
+					treeWalk[type] = {};
+				}
+				treeWalk = treeWalk[type];
+			}
+			treeWalk._ = methodIndex;
+		} else if (key === "_") {
+			tree._ = methodIndex;
 		}
-		code.push(sign.code);
-		lastLength = sign.length;
-	});
-	if (lastLength) {
-		code.push("}");
 	}
-	code.push("throw new ReferenceError('signature not found');","}");
-	return new Function("methods",code.join("\n"))(methods);
+	if (embedCode) {
+		var methodsCode = methods.map(getFunctionCode);
+		var code = recurseMethodTree(tree,-1,methodsCode);
+		code.unshift("var len = arguments.length;");
+		code.push("throw new ReferenceError('signature not found');");
+		code = code.join("\n");
+		return new Function(code);
+	} else {
+		var code = recurseMethodTree(tree,-1);
+		code.unshift("return function() {","var len = arguments.length;");
+		code.push("throw new ReferenceError('signature not found');","}");
+		code = code.join("\n");
+		return new Function("methods",code)(methods);
+	}
 }
+
 // - -------------------------------------------------------------------- - //
 
 // .type(arg)
@@ -207,144 +224,201 @@ factory.type = function(arg) {
 
 // - -------------------------------------------------------------------- - //
 
-// .method(signatures);
-factory.method = function(signatures) {
-	var type = factory.type(signatures);
-	if (type === "object") {
-		return createSignatures(signatures);
-	} else if (type === "error") {
-		return function() { throw signatures; }
-	} else if (type === "function") {
-		return signatures;
-	} else if (type === "string") {
-		return new Function(signatures);
-	} else if (type === "undefined") {
-		return function() {};
-	}
-};
+factory.method = createMethod({
+
+	// .method(function)
+	f: "return f",
+
+	// .method(signatures)
+	o: createMethod,
+
+	// .method(signatures,embedCode)
+	ob: createMethod,
+
+	// .method(error)
+	e: "return function() { throw e }",
+
+	// .method(code)
+	s: "return new Function(s)",
+
+	// .method(undefined)
+	u: "return function() {}",
+
+});
 
 // - -------------------------------------------------------------------- - //
 
 // .extend()
-factory.extend = function(original) {
-	var type = factory.type(original);
+factory.extend = createMethod({
 
 	// .extend(factory)
-	if (type == "object" && arguments.length == 1){
-		for (var i = 0; i < arguments.length; i++) {
-			var arg = arguments[i];
-			var atype = factory.type(arg);
-			if (atype == "object") {
-				for (var key in arg) {
-					factory[key] = factory.method(arg[key]);
-				}
-			}
+	o: function(methods) {
+		var keys = Object.keys(methods);
+		var len = keys.length;
+		for (var i = 0; i < len; i++) {
+			var key = keys[i];
+			factory[key] = factory.method(methods[key]);
 		}
+		return factory;
+	},
 
-	// .extend(object)
-	} else if (type == "object") {
-		for (var i = 1; i < arguments.length; i++) {
-			var arg = arguments[i];
-			var atype = factory.type(arg);
-			if (atype == "object") {
-				for (var key in arg) {
-					original[key] = arg[key];
-				}
-			}
+	// .extend(original,object)
+	oo: function(original,object) {
+		var keys = Object.keys(object);
+		var len = keys.length;
+		for (var i = 0; i < len; i++) {
+			var key = keys[i];
+			original[key] = object[key];
 		}
 		return original;
+	},
 
-	// .extend(class)
-	} else if (type == "function") {
-		for (var i = 1; i < arguments.length; i++) {
-			var arg = arguments[i];
-			var atype = factory.type(arg);
-			if (atype == "object") {
-				for (var key in arg) {
-					original.prototype[key] = factory.method(arg[key]);
+	// .extend(class,methods)
+	fo: function(cls,methods) {
+		var keys = Object.keys(methods);
+		var len = keys.length;
+		for (var i = 0; i < len; i++) {
+			var key = keys[i];
+			cls.prototype[key] = factory.method(methods[key]);
+		}
+		return cls;
+	},
+
+	// .extend(arg0, arg1, ...)
+	_: function() {
+		var type = factory.type(arguments[0]);
+		if (type == "object") {
+			for (var i = 1; i < arguments.length; i++) {
+				var arg = arguments[i];
+				var atype = factory.type(arg);
+				if (atype == "object") {
+					var keys = Object.keys(arg);
+					var len = keys.length;
+					for (var a = 0; a < len; a++) {
+						var key = keys[a];
+						arguments[0][key] = arg[key];
+					}
+				}
+			}
+		} else if (type == "function") {
+			for (var i = 1; i < arguments.length; i++) {
+				var arg = arguments[i];
+				var atype = factory.type(arg);
+				if (atype == "object") {
+					var keys = Object.keys(arg);
+					var len = keys.length;
+					for (var a = 0; a < len; a++) {
+						var key = keys[a];
+						arguments[0].prototype[key] = factory.method(arg[key]);
+					}
 				}
 			}
 		}
+		return arguments[0];
+	},
 
-	}
-};
+});
 
 // - -------------------------------------------------------------------- - //
 
-// .clone(arg)
-factory.clone = function(arg) {
-	var argtype = factory.type(arg)
-	if (argtype == "object") {
+factory.clone = createMethod({
+
+	// .clone(object)
+	o: function(object) {
 		var clone = {};
-		for (var key in arg) {
-			var valtype = factory.type(arg[key]);
-			if (valtype == "object" || valtype == "array") {
-				clone[key] = factory.clone(arg[key]);
-			} else {
-				clone[key] = arg[key];
-			}
+		var keys = Object.keys(object);
+		var len = keys.length;
+		for (var i = 0; i < len; i++) {
+			var key = keys[i];
+			clone[key] = factory.clone(object[key]);
 		}
 		return clone;
-	} else if (argtype == "array") {
+	},
+
+	// .clone(array)
+	a: function(array) {
 		var clone = [];
-		for (var i = 0; i < arg.length; i++) {
-			var valtype = factory.type(arg[i]);
-			if (valtype == "object" || valtype == "array") {
-				clone[i] = factory.clone(arg[i]);
-			} else {
-				clone[i] = arg[i];
-			}
+		var len = array.length;
+		for (var i = 0; i < len; i++) {
+			clone[i] = factory.clone(array[i]);
 		}
 		return clone;
-	} else {
+	},
+
+	// .clone(date)
+	d: function(date) {
+		return new Date(date.getTime());
+	},
+
+	// .clone(arg)
+	_: function(arg) {
 		return arg;
-	}
-}
+	},
+
+});
 
 // - -------------------------------------------------------------------- - //
 
-// .class(methods)
-factory.class = function(methods) {
-	if (factory.type(methods) != "object") {
-		methods = {};
-	}
-	if (factory.type(methods.inherits) != "array") {
-		methods.inherits = [methods.inherits];
-	}
-	var inherits = [];
-	for (var i = 0; i < methods.inherits.length; i++) {
-		var cls = methods.inherits[i];
-		var type = factory.type(cls);
-		if (type == "string") {
-			cls = cls.split(".");
-			if (cls.length == 2) {
-				inherits.push(require(cls[0])[cls[1]]);
-			} else if (cls.length == 1) {
-				inherits.push(require(cls[0]));
+factory.inherits = createMethod({
+
+	// .inherits(class,super)
+	fa: function(cls,superClass) {
+		factory.inherits(cls,superClass[0]);
+	},
+
+	// .inherits(class,super)
+	fs: function(cls,superClass) {
+		var parts = superClass.split(".");
+		if (parts.length == 2) {
+			factory.inherits(cls,require(parts[0])[parts[1]])
+		} else if (parts.length == 1) {
+			factory.inherits(cls,require(parts[0]));
+		}
+	},
+
+	// .inherits(class,super)
+	ff: function(cls,superClass) {
+		cls.super_ = superClass;
+		cls.prototype = Object.create(superClass.prototype,{
+			constructor: {
+				value: cls,
+				enumerable: false,
+				writable: true,
+				configurable: true
 			}
-		} else if (type == "function") {
-			inherits.push(cls);
+		});
+	},
+
+});
+
+// - -------------------------------------------------------------------- - //
+
+factory.class = createMethod({
+
+	// .class(methods)
+	o: function(methods) {
+		var constructor = factory.method(methods.constructor);
+		var cls = function() {
+			if (cls.super_) {
+				cls.super_.apply(this,arguments);
+			}
+			constructor.apply(this,arguments);
+		};
+		if (methods.inherits) {
+			factory.inherits(cls,methods.inherits);
 		}
-	}
-	var constructor = factory.method(methods.constructor);
-	var cls = function() {
-		for (var i = 0; i < inherits.length; i++) {
-			inherits[i].apply(this,arguments);
+		var keys = Object.keys(methods);
+		var len = keys.length;
+		for (var i = 0; i < len; i++) {
+			var key = keys[i];
+			if (key != "constructor" && key != "inherits") {
+				cls.prototype[key] = factory.method(methods[key]);
+			}
 		}
-		constructor.apply(this,arguments);
-	};
-	if (inherits.length == 1) {
-		lib.util.inherits(cls,inherits[0]);
-	} else if (inherits.length > 1) {
-		throw new Error("multiple inheritance not allowed");
-	}
-	for (var name in methods) {
-		if (name != "constructor" && name != "inherits") {
-			cls.prototype[name] = factory.method(methods[name]);
-		}
-	}
-	return cls;
-}
+		return cls;
+	},
+
+});
 
 // - -------------------------------------------------------------------- - //
 
@@ -361,44 +435,38 @@ factory.extend({
 	// .toArray(arg)
 	toArray: function(arg) { return Array.prototype.slice.call(arg); },
 
-});
-
-// - -------------------------------------------------------------------- - //
-
-factory.extend({
-
 	// .isNull(arg)
-	isNull: function(arg) { return factory.type(arg) == "undefined" },
+	isNull: function(arg) { return factory.type(arg) === "undefined" },
 
 	// .isDate(arg)
-	isDate: function(arg) { return factory.type(arg) == "date" },
+	isDate: function(arg) { return factory.type(arg) === "date" },
 
 	// .isError(arg)
-	isError: function(arg) { return factory.type(arg) == "error" },
+	isError: function(arg) { return factory.type(arg) === "error" },
 
 	// .isArray(arg)
-	isArray: function(arg) { return factory.type(arg) == "array" },
+	isArray: function(arg) { return factory.type(arg) === "array" },
 
 	// .isNumber(arg)
-	isNumber: function(arg) { return factory.type(arg) == "number" },
+	isNumber: function(arg) { return factory.type(arg) === "number" },
 
 	// .isString(arg)
-	isString: function(arg) { return factory.type(arg) == "string" },
+	isString: function(arg) { return factory.type(arg) === "string" },
 
 	// .isObject(arg)
-	isObject: function(arg) { return factory.type(arg) == "object" },
+	isObject: function(arg) { return factory.type(arg) === "object" },
 
 	// .isRegExp(arg)
-	isRegExp: function(arg) { return factory.type(arg) == "regexp" },
+	isRegExp: function(arg) { return factory.type(arg) === "regexp" },
 
 	// .isBoolean(arg)
-	isBoolean: function(arg) { return factory.type(arg) == "boolean" },
+	isBoolean: function(arg) { return factory.type(arg) === "boolean" },
 
 	// .isFunction(arg)
-	isFunction: function(arg) { return factory.type(arg) == "function" },
+	isFunction: function(arg) { return factory.type(arg) === "function" },
 
 	// .isArguments(arg)
-	isArguments: function(arg) { return factory.type(arg) == "arguments" },
+	isArguments: function(arg) { return factory.type(arg) === "arguments" },
 
 });
 
@@ -406,6 +474,7 @@ factory.extend({
 
 factory.extend({
 
+	// .guid()
 	guid: function() {
 	  var uid = "";
 	  for (var i = 0; i < 8 ; i++) {

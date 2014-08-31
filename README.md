@@ -209,6 +209,16 @@ var func = factory.method({
 });
 ```
 
+If the code does not use any external vars its possible to optimize the generated function by passing a second argument as `true`.
+
+```js
+var optimized = factory.method({
+	s: "return this.get(s)",
+	ss: "return this.both(s0,s1)",
+	f: "this.on('ready',f)",
+},true); // tell factory.method that this function does not use any external var
+```
+
 ## .class
 
 Creates a class with given methods, constructor and inheritance.
