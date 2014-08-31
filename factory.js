@@ -64,12 +64,12 @@ function getFunctionCode(method) {
 		var methodArgs = methodWithArgs[1].split(/\s*,\s*/).map(function(arg,idx) {
 			return "var " + arg + " = arguments[" + idx + "];";
 		});
-		return methodArgs.join("\n") + "\n" + methodCode + ";";
+		return methodArgs.join("\n") + "\n" + methodCode + ";return;";
 	} else {
 		var methodWithoutArgs = methodText.match(/function [\w]*\(\)\s*/);
 		if (methodWithoutArgs) {
 			var methodCode = methodText.substr(methodWithoutArgs[0].length).trim().replace(/^\{|\}$/g,"").trim();
-			return methodCode + ";";
+			return methodCode + ";return;";
 		}
 	}
 }
@@ -85,13 +85,13 @@ function createExpression(type,index) {
 			expression = argument + " instanceof Array";
 			break;
 		case "b":
-			expression = "(" + argument + " instanceof Boolean || typeof " + argument + " === 'boolean')";
+			expression = "(typeof " + argument + " === 'boolean' || " + argument + " instanceof Boolean)";
 			break;
 		case "s":
-			expression = "(" + argument + " instanceof String || typeof " + argument + " === 'string')";
+			expression = "(typeof " + argument + " === 'string' || " + argument + " instanceof String)";
 			break;
 		case "n":
-			expression = "(" + argument + " instanceof Number || typeof " + argument + " === 'number')";
+			expression = "(typeof " + argument + " === 'number' || " + argument + " instanceof Number)";
 			break;
 		case "d":
 			expression = argument + " instanceof Date";
@@ -144,7 +144,8 @@ function recurseMethodTree(tree,index,methods) {
 function createMethod(signatures,embedCode) {
 	var tree = {};
 	var methods = [];
-	var keys = Object.keys(signatures);
+	var keys = Object.keys(signatures).sort();
+	keys.reverse();
 	var keysLength = keys.length;
 	for (var s = 0; s < keysLength; s++) {
 		var key = keys[s];
