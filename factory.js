@@ -79,7 +79,7 @@ function createExpression(type,index) {
 	var argument = "arguments[" + index + "]";
 	switch (type) {
 		case "f":
-			expression = argument + " instanceof Function";
+			expression = "typeof " + argument + " === 'function'";
 			break;
 		case "a":
 			expression = argument + " instanceof Array";
@@ -106,7 +106,7 @@ function createExpression(type,index) {
 			expression = "(" + argument + " === null || typeof " + argument + " === 'undefined')";
 			break;
 		case "o":
-			expression = argument + " instanceof Object";
+			expression = "Object.prototype.toString.call(" + argument + ") === '[object Object]'";
 			break;
 		case "_":
 			expression = "return methods[" + index + "].apply(this,arguments)";

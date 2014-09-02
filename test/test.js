@@ -248,6 +248,10 @@ describe("Factory",function() {
 		var method = lib.factory.method({
 			0: "return 'zero arguments'",
 			5: "return 'five arguments'",
+			f: "return 'function'",
+			o: "return 'object'",
+			a: "return 'array'",
+			d: "return 'date'",
 			s: "return s",
 			ss: "return [s0,s1]",
 			n: "return n * 10",
@@ -275,6 +279,10 @@ describe("Factory",function() {
 			},
 		});
 		assert.deepEqual(method(),"zero arguments");
+		assert.deepEqual(method({}),"object");
+		assert.deepEqual(method(function() {}),"function");
+		assert.deepEqual(method([]),"array");
+		assert.deepEqual(method(new Date()),"date");
 		assert.deepEqual(method(null,1,"a",{},[]),"five arguments");
 		assert.deepEqual(method("string"),"string");
 		assert.deepEqual(method("string","string"),["string","string"]);
@@ -286,7 +294,7 @@ describe("Factory",function() {
 		assert.deepEqual(method(["a","b"],["c"],["d","e"]),["a","b","c","d","e"]);
 		assert.deepEqual(method({a:"",b:""},{c:""},{d:"",e:""}),["a","b","c","d","e"]);
 		assert.deepEqual(method("string",function(ch){return ch.charCodeAt(0)},/s|t/g),"115116ring");
-		assert.throws(function() { method([]) },ReferenceError);
+		assert.throws(function() { method([],[],[],[]) },ReferenceError);
 	});
 
 	// @method-embed
