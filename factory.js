@@ -322,6 +322,30 @@ factory.extend = createMethod({
 
 // - -------------------------------------------------------------------- - //
 
+factory.merge = createMethod({
+
+	// .merge(source,target)
+	oo: function(source,target) {
+		var keys = Object.keys(source);
+		var len = keys.length;
+		for (var i = 0; i < len; i++) {
+			var key = keys[i];
+			if (factory.isObject(source[key])) {
+				if (!factory.isObject(target[key])) {
+					target[key] = {};
+				}
+				factory.merge(source[key],target[key]);
+			} else {
+				target[key] = source[key];
+			}
+		}
+		return target;
+	},
+
+});
+
+// - -------------------------------------------------------------------- - //
+
 factory.clone = createMethod({
 
 	// .clone(object)
