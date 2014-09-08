@@ -249,7 +249,6 @@ factory.method = createMethod({
 
 // - -------------------------------------------------------------------- - //
 
-// .extend()
 factory.extend = createMethod({
 
 	// .extend(factory)
@@ -263,17 +262,6 @@ factory.extend = createMethod({
 		return factory;
 	},
 
-	// .extend(original,object)
-	oo: function(original,object) {
-		var keys = Object.keys(object);
-		var len = keys.length;
-		for (var i = 0; i < len; i++) {
-			var key = keys[i];
-			original[key] = object[key];
-		}
-		return original;
-	},
-
 	// .extend(class,methods)
 	fo: function(cls,methods) {
 		var keys = Object.keys(methods);
@@ -285,37 +273,49 @@ factory.extend = createMethod({
 		return cls;
 	},
 
+	// .extend(target,source)
+	oo: function(target,source) {
+		var keys = Object.keys(source);
+		var len = keys.length;
+		for (var i = 0; i < len; i++) {
+			var key = keys[i];
+			target[key] = source[key];
+		}
+		return target;
+	},
+
 	// .extend(arg0, arg1, ...)
 	_: function() {
-		var type = factory.type(arguments[0]);
-		if (type == "object") {
+		var target = arguments[0];
+		var type = factory.type(target);
+		if (type === "object") {
 			for (var i = 1; i < arguments.length; i++) {
-				var arg = arguments[i];
-				var atype = factory.type(arg);
-				if (atype == "object") {
-					var keys = Object.keys(arg);
+				var source = arguments[i];
+				var srctype = factory.type(source);
+				if (srctype === "object") {
+					var keys = Object.keys(source);
 					var len = keys.length;
 					for (var a = 0; a < len; a++) {
 						var key = keys[a];
-						arguments[0][key] = arg[key];
+						target[key] = source[key];
 					}
 				}
 			}
 		} else if (type == "function") {
 			for (var i = 1; i < arguments.length; i++) {
-				var arg = arguments[i];
-				var atype = factory.type(arg);
-				if (atype == "object") {
-					var keys = Object.keys(arg);
+				var source = arguments[i];
+				var srctype = factory.type(source);
+				if (srctype === "object") {
+					var keys = Object.keys(source);
 					var len = keys.length;
 					for (var a = 0; a < len; a++) {
 						var key = keys[a];
-						arguments[0].prototype[key] = factory.method(arg[key]);
+						target.prototype[key] = factory.method(source[key]);
 					}
 				}
 			}
 		}
-		return arguments[0];
+		return target;
 	},
 
 });
@@ -324,8 +324,8 @@ factory.extend = createMethod({
 
 factory.merge = createMethod({
 
-	// .merge(source,target)
-	oo: function(source,target) {
+	// .merge(target,source)
+	oo: function(target,source) {
 		var keys = Object.keys(source);
 		var len = keys.length;
 		for (var i = 0; i < len; i++) {
@@ -334,9 +334,25 @@ factory.merge = createMethod({
 				if (!factory.isObject(target[key])) {
 					target[key] = {};
 				}
-				factory.merge(source[key],target[key]);
+				factory.merge(target[key],source[key]);
 			} else {
 				target[key] = source[key];
+			}
+		}
+		return target;
+	},
+
+	// .extend(arg0, arg1, ...)
+	_: function() {
+		var target = arguments[0];
+		var type = factory.type(target);
+		if (type === "object") {
+			for (var i = 1; i < arguments.length; i++) {
+				var source = arguments[i];
+				var srctype = factory.type(source);
+				if (srctype === "object") {
+					factory.merge(target,source);
+				}
 			}
 		}
 		return target;

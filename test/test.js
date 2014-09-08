@@ -491,6 +491,35 @@ describe("Factory",function() {
 		assert.equal(repeat,0);
 	});
 
+	// @merge
+	it("merge",function() {
+		var one = { a: "a", b: "b", c: "c", d: { d1: "d1", d2: "d2" } };
+		var two = { b: { b1: "b1", b2: "b2" }, c: "ccc", d: { d1: "d111" } };
+		var merged = lib.factory.merge(one,two);
+		assert.strictEqual(one,merged);
+		assert.deepEqual(one,{
+			a: "a",
+			b: { b1: "b1", b2: "b2" },
+			c: "ccc",
+			d: { d1: "d111", d2: "d2" },
+		});
+	});
+
+	// @merge-multiple
+	it("merge-multiple",function() {
+		var one = { a: "a", b: "b", c: "c", d: { d1: "d1", d2: "d2" } };
+		var two = { b: { b1: "b1", b2: "b2" }, c: "ccc", d: { d1: "d111" } };
+		var three = { b: { b2: "b222"}, c: { c1: "c1", c2: "c2" } };
+		var merged = lib.factory.merge(one,two,three);
+		assert.strictEqual(one,merged);
+		assert.deepEqual(one,{
+			a: "a",
+			b: { b1: "b1", b2: "b222" },
+			c: { c1: "c1", c2: "c2" },
+			d: { d1: "d111", d2: "d2" },
+		});
+	});
+
 });
 
 // - -------------------------------------------------------------------- - //
