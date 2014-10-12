@@ -18,219 +18,6 @@ var assert = require("assert");
 
 describe("Factory",function() {
 
-	// @type
-	it("type",function() {
-		assert.strictEqual(lib.factory.type(new String("string")),"string");
-		assert.strictEqual(lib.factory.type("string"),"string");
-		assert.strictEqual(lib.factory.type(123),"number");
-		assert.strictEqual(lib.factory.type(new RegExp("\w")),"regexp");
-		assert.strictEqual(lib.factory.type(/\w/),"regexp");
-		assert.strictEqual(lib.factory.type(new Date()),"date");
-		assert.strictEqual(lib.factory.type([1,2,3]),"array");
-		assert.strictEqual(lib.factory.type(arguments),"arguments");
-		assert.strictEqual(lib.factory.type(true),"boolean");
-		assert.strictEqual(lib.factory.type(false),"boolean");
-		assert.strictEqual(lib.factory.type(),"undefined");
-		assert.strictEqual(lib.factory.type(null),"undefined");
-		assert.strictEqual(lib.factory.type(new Object()),"object");
-		assert.strictEqual(lib.factory.type({a:"b",b:function(){},c:[]}),"object");
-		assert.strictEqual(lib.factory.type(function(){}),"function");
-		assert.strictEqual(lib.factory.type(new Error()),"error");
-	});
-
-	// @isString
-	it("isString",function() {
-		assert.strictEqual(lib.factory.isString(new String("string")),true);
-		assert.strictEqual(lib.factory.isString("string"),true);
-		assert.strictEqual(lib.factory.isString(123),false);
-		assert.strictEqual(lib.factory.isString(new RegExp("\w")),false);
-		assert.strictEqual(lib.factory.isString(/\w/),false);
-		assert.strictEqual(lib.factory.isString(new Date()),false);
-		assert.strictEqual(lib.factory.isString([1,2,3]),false);
-		assert.strictEqual(lib.factory.isString(arguments),false);
-		assert.strictEqual(lib.factory.isString(true),false);
-		assert.strictEqual(lib.factory.isString(false),false);
-		assert.strictEqual(lib.factory.isString(),false);
-		assert.strictEqual(lib.factory.isString(null),false);
-		assert.strictEqual(lib.factory.isString(new Object()),false);
-		assert.strictEqual(lib.factory.isString({a:"b",b:function(){},c:[]}),false);
-		assert.strictEqual(lib.factory.isString(function(){}),false);
-		assert.strictEqual(lib.factory.isString(new Error("error")),false);
-	});
-
-	// @isNumber
-	it("isNumber",function() {
-		assert.strictEqual(lib.factory.isNumber("string"),false);
-		assert.strictEqual(lib.factory.isNumber(new Number(123)),true);
-		assert.strictEqual(lib.factory.isNumber(123),true);
-		assert.strictEqual(lib.factory.isNumber(new RegExp("\w")),false);
-		assert.strictEqual(lib.factory.isNumber(/\w/),false);
-		assert.strictEqual(lib.factory.isNumber(new Date()),false);
-		assert.strictEqual(lib.factory.isNumber([1,2,3]),false);
-		assert.strictEqual(lib.factory.isNumber(arguments),false);
-		assert.strictEqual(lib.factory.isNumber(true),false);
-		assert.strictEqual(lib.factory.isNumber(false),false);
-		assert.strictEqual(lib.factory.isNumber(),false);
-		assert.strictEqual(lib.factory.isNumber(null),false);
-		assert.strictEqual(lib.factory.isNumber(new Object()),false);
-		assert.strictEqual(lib.factory.isNumber({a:"b",b:function(){},c:[]}),false);
-		assert.strictEqual(lib.factory.isNumber(function(){}),false);
-		assert.strictEqual(lib.factory.isNumber(new Error("error")),false);
-	});
-
-	// @isObject
-	it("isObject",function() {
-		assert.strictEqual(lib.factory.isObject("string"),false);
-		assert.strictEqual(lib.factory.isObject(123),false);
-		assert.strictEqual(lib.factory.isObject(new RegExp("\w")),false);
-		assert.strictEqual(lib.factory.isObject(/\w/),false);
-		assert.strictEqual(lib.factory.isObject(new Date()),false);
-		assert.strictEqual(lib.factory.isObject([1,2,3]),false);
-		assert.strictEqual(lib.factory.isObject(arguments),false);
-		assert.strictEqual(lib.factory.isObject(true),false);
-		assert.strictEqual(lib.factory.isObject(false),false);
-		assert.strictEqual(lib.factory.isObject(),false);
-		assert.strictEqual(lib.factory.isObject(null),false);
-		assert.strictEqual(lib.factory.isObject(new Object()),true);
-		assert.strictEqual(lib.factory.isObject({a:"b",b:function(){},c:[]}),true);
-		assert.strictEqual(lib.factory.isObject(function(){}),false);
-		assert.strictEqual(lib.factory.isObject(new Error("error")),false);
-	});
-
-	// @isFunction
-	it("isFunction",function() {
-		assert.strictEqual(lib.factory.isFunction("string"),false);
-		assert.strictEqual(lib.factory.isFunction(123),false);
-		assert.strictEqual(lib.factory.isFunction(new RegExp("\w")),false);
-		assert.strictEqual(lib.factory.isFunction(/\w/),false);
-		assert.strictEqual(lib.factory.isFunction(new Date()),false);
-		assert.strictEqual(lib.factory.isFunction([1,2,3]),false);
-		assert.strictEqual(lib.factory.isFunction(arguments),false);
-		assert.strictEqual(lib.factory.isFunction(true),false);
-		assert.strictEqual(lib.factory.isFunction(false),false);
-		assert.strictEqual(lib.factory.isFunction(),false);
-		assert.strictEqual(lib.factory.isFunction(null),false);
-		assert.strictEqual(lib.factory.isFunction(new Object()),false);
-		assert.strictEqual(lib.factory.isFunction({a:"b",b:function(){},c:[]}),false);
-		assert.strictEqual(lib.factory.isFunction(function(){}),true);
-		assert.strictEqual(lib.factory.isFunction(new Error("error")),false);
-	});
-
-	// @isRegExp
-	it("isRegExp",function() {
-		assert.strictEqual(lib.factory.isRegExp("string"),false);
-		assert.strictEqual(lib.factory.isRegExp(123),false);
-		assert.strictEqual(lib.factory.isRegExp(new RegExp("\w")),true);
-		assert.strictEqual(lib.factory.isRegExp(/\w/),true);
-		assert.strictEqual(lib.factory.isRegExp(new Date()),false);
-		assert.strictEqual(lib.factory.isRegExp([1,2,3]),false);
-		assert.strictEqual(lib.factory.isRegExp(arguments),false);
-		assert.strictEqual(lib.factory.isRegExp(true),false);
-		assert.strictEqual(lib.factory.isRegExp(false),false);
-		assert.strictEqual(lib.factory.isRegExp(),false);
-		assert.strictEqual(lib.factory.isRegExp(null),false);
-		assert.strictEqual(lib.factory.isRegExp(new Object()),false);
-		assert.strictEqual(lib.factory.isRegExp({a:"b",b:function(){},c:[]}),false);
-		assert.strictEqual(lib.factory.isRegExp(function(){}),false);
-		assert.strictEqual(lib.factory.isRegExp(new Error("error")),false);
-	});
-
-	// @isArray
-	it("isArray",function() {
-		assert.strictEqual(lib.factory.isArray("string"),false);
-		assert.strictEqual(lib.factory.isArray(123),false);
-		assert.strictEqual(lib.factory.isArray(new RegExp("\w")),false);
-		assert.strictEqual(lib.factory.isArray(/\w/),false);
-		assert.strictEqual(lib.factory.isArray(new Date()),false);
-		assert.strictEqual(lib.factory.isArray([1,2,3]),true);
-		assert.strictEqual(lib.factory.isArray(arguments),false);
-		assert.strictEqual(lib.factory.isArray(true),false);
-		assert.strictEqual(lib.factory.isArray(false),false);
-		assert.strictEqual(lib.factory.isArray(),false);
-		assert.strictEqual(lib.factory.isArray(null),false);
-		assert.strictEqual(lib.factory.isArray(new Object()),false);
-		assert.strictEqual(lib.factory.isArray({a:"b",b:function(){},c:[]}),false);
-		assert.strictEqual(lib.factory.isArray(function(){}),false);
-		assert.strictEqual(lib.factory.isArray(new Error("error")),false);
-	});
-
-	// @isDate
-	it("isDate",function() {
-		assert.strictEqual(lib.factory.isDate("string"),false);
-		assert.strictEqual(lib.factory.isDate(123),false);
-		assert.strictEqual(lib.factory.isDate(new RegExp("\w")),false);
-		assert.strictEqual(lib.factory.isDate(/\w/),false);
-		assert.strictEqual(lib.factory.isDate(new Date()),true);
-		assert.strictEqual(lib.factory.isDate([1,2,3]),false);
-		assert.strictEqual(lib.factory.isDate(arguments),false);
-		assert.strictEqual(lib.factory.isDate(true),false);
-		assert.strictEqual(lib.factory.isDate(false),false);
-		assert.strictEqual(lib.factory.isDate(),false);
-		assert.strictEqual(lib.factory.isDate(null),false);
-		assert.strictEqual(lib.factory.isDate(new Object()),false);
-		assert.strictEqual(lib.factory.isDate({a:"b",b:function(){},c:[]}),false);
-		assert.strictEqual(lib.factory.isDate(function(){}),false);
-		assert.strictEqual(lib.factory.isDate(new Error("error")),false);
-	});
-
-	// @isBoolean
-	it("isBoolean",function() {
-		assert.strictEqual(lib.factory.isBoolean("string"),false);
-		assert.strictEqual(lib.factory.isBoolean(123),false);
-		assert.strictEqual(lib.factory.isBoolean(new Boolean()),true);
-		assert.strictEqual(lib.factory.isBoolean(new RegExp("\w")),false);
-		assert.strictEqual(lib.factory.isBoolean(/\w/),false);
-		assert.strictEqual(lib.factory.isBoolean(new Date()),false);
-		assert.strictEqual(lib.factory.isBoolean([1,2,3]),false);
-		assert.strictEqual(lib.factory.isBoolean(arguments),false);
-		assert.strictEqual(lib.factory.isBoolean(true),true);
-		assert.strictEqual(lib.factory.isBoolean(false),true);
-		assert.strictEqual(lib.factory.isBoolean(),false);
-		assert.strictEqual(lib.factory.isBoolean(null),false);
-		assert.strictEqual(lib.factory.isBoolean(new Object()),false);
-		assert.strictEqual(lib.factory.isBoolean({a:"b",b:function(){},c:[]}),false);
-		assert.strictEqual(lib.factory.isBoolean(function(){}),false);
-		assert.strictEqual(lib.factory.isBoolean(new Error("error")),false);
-	});
-
-	// @isArguments
-	it("isArguments",function() {
-		assert.strictEqual(lib.factory.isArguments("string"),false);
-		assert.strictEqual(lib.factory.isArguments(123),false);
-		assert.strictEqual(lib.factory.isArguments(new RegExp("\w")),false);
-		assert.strictEqual(lib.factory.isArguments(/\w/),false);
-		assert.strictEqual(lib.factory.isArguments(new Date()),false);
-		assert.strictEqual(lib.factory.isArguments([1,2,3]),false);
-		assert.strictEqual(lib.factory.isArguments(arguments),true);
-		assert.strictEqual(lib.factory.isArguments(true),false);
-		assert.strictEqual(lib.factory.isArguments(false),false);
-		assert.strictEqual(lib.factory.isArguments(),false);
-		assert.strictEqual(lib.factory.isArguments(null),false);
-		assert.strictEqual(lib.factory.isArguments(new Object()),false);
-		assert.strictEqual(lib.factory.isArguments({a:"b",b:function(){},c:[]}),false);
-		assert.strictEqual(lib.factory.isArguments(function(){}),false);
-		assert.strictEqual(lib.factory.isArguments(new Error("error")),false);
-	});
-
-	// @isNull
-	it("isNull",function() {
-		assert.strictEqual(lib.factory.isNull("string"),false);
-		assert.strictEqual(lib.factory.isNull(123),false);
-		assert.strictEqual(lib.factory.isNull(new RegExp("\w")),false);
-		assert.strictEqual(lib.factory.isNull(/\w/),false);
-		assert.strictEqual(lib.factory.isNull(new Date()),false);
-		assert.strictEqual(lib.factory.isNull([1,2,3]),false);
-		assert.strictEqual(lib.factory.isNull(arguments),false);
-		assert.strictEqual(lib.factory.isNull(true),false);
-		assert.strictEqual(lib.factory.isNull(false),false);
-		assert.strictEqual(lib.factory.isNull(),true);
-		assert.strictEqual(lib.factory.isNull(null),true);
-		assert.strictEqual(lib.factory.isNull(new Object()),false);
-		assert.strictEqual(lib.factory.isNull({a:"b",b:function(){},c:[]}),false);
-		assert.strictEqual(lib.factory.isNull(function(){}),false);
-		assert.strictEqual(lib.factory.isNull(new Error("error")),false);
-	});
-
 	// @toArray
 	it("toArray",function() {
 		assert.throws(function() { lib.factory.toArray() });
@@ -243,103 +30,49 @@ describe("Factory",function() {
 		assert.notStrictEqual(lib.factory.toArray(arguments),[]);
 	});
 
-	// @method
-	it("method",function() {
-		var method = lib.factory.method({
-			0: "return 'zero arguments'",
-			5: "return 'five arguments'",
-			f: "return 'function'",
-			o: "return 'object'",
-			a: "return 'array'",
-			d: "return 'date'",
-			s: "return s",
-			ss: "return [s0,s1]",
-			n: "return n * 10",
-			nn: "return n0 - n1",
-			b: "return !b",
-			bb: "return b0 && b1",
-			3: {
-				aaa: function(a0,a1,a2) {
-					var a = [];
-					a0.forEach(function(e) { a.push(e) });
-					a1.forEach(function(e) { a.push(e) });
-					a2.forEach(function(e) { a.push(e) });
-					return a;
-				},
-				ooo: function(o0,o1,o2) {
-					var a = [];
-					Object.keys(o0).forEach(function(e) { a.push(e) });
-					Object.keys(o1).forEach(function(e) { a.push(e) });
-					Object.keys(o2).forEach(function(e) { a.push(e) });
-					return a;
-				},
-				sfr: function(str,fn,re) {
-					return str.replace(re,fn);
-				},
-			},
-		});
-		assert.deepEqual(method(),"zero arguments");
-		assert.deepEqual(method({}),"object");
-		assert.deepEqual(method(function() {}),"function");
-		assert.deepEqual(method([]),"array");
-		assert.deepEqual(method(new Date()),"date");
-		assert.deepEqual(method(null,1,"a",{},[]),"five arguments");
-		assert.deepEqual(method("string"),"string");
-		assert.deepEqual(method("string","string"),["string","string"]);
-		assert.deepEqual(method(10),100);
-		assert.deepEqual(method(10,5),5);
-		assert.deepEqual(method(true),false);
-		assert.deepEqual(method(true,false),false);
-		assert.deepEqual(method(true,true),true);
-		assert.deepEqual(method(["a","b"],["c"],["d","e"]),["a","b","c","d","e"]);
-		assert.deepEqual(method({a:"",b:""},{c:""},{d:"",e:""}),["a","b","c","d","e"]);
-		assert.deepEqual(method("string",function(ch){return ch.charCodeAt(0)},/s|t/g),"115116ring");
-		assert.throws(function() { method([],[],[],[]) },ReferenceError);
-	});
-
-	// @method-embed
-	it("method-embed",function() {
-		var method = lib.factory.method({
-			0: "return 'zero arguments'",
-			5: "return 'five arguments'",
-			s: "return s",
-			ss: "return [s0,s1]",
-			n: "return n * 10",
-			nn: "return n0 - n1",
-			b: "return !b",
-			bb: "return b0 && b1",
-			aaa: function(a0,a1,a2) {
-				var a = [];
-				a0.forEach(function(e) { a.push(e) });
-				a1.forEach(function(e) { a.push(e) });
-				a2.forEach(function(e) { a.push(e) });
-				return a;
-			},
-			ooo: function(o0,o1,o2) {
-				var a = [];
-				Object.keys(o0).forEach(function(e) { a.push(e) });
-				Object.keys(o1).forEach(function(e) { a.push(e) });
-				Object.keys(o2).forEach(function(e) { a.push(e) });
-				return a;
-			},
-			sfr: function(str,fn,re) {
-				return str.replace(re,fn);
-			},
-		},true);
-		assert.deepEqual(method(),"zero arguments");
-		assert.deepEqual(method(null,1,"a",{},[]),"five arguments");
-		assert.deepEqual(method("string"),"string");
-		assert.deepEqual(method("string","string"),["string","string"]);
-		assert.deepEqual(method(10),100);
-		assert.deepEqual(method(10,5),5);
-		assert.deepEqual(method(true),false);
-		assert.deepEqual(method(true,false),false);
-		assert.deepEqual(method(true,true),true);
-		assert.deepEqual(method(["a","b"],["c"],["d","e"]),["a","b","c","d","e"]);
-		assert.deepEqual(method({a:"",b:""},{c:""},{d:"",e:""}),["a","b","c","d","e"]);
-		assert.deepEqual(method("string",function(ch){return ch.charCodeAt(0)},/s|t/g),"115116ring");
-		assert.throws(function() { method([]) },ReferenceError);
-	});
+	// // @method-embed
+	// it("method-embed",function() {
+	// 	var method = lib.factory.method({
+	// 		0: "return 'zero arguments'",
+	// 		5: "return 'five arguments'",
+	// 		s: "return s",
+	// 		ss: "return [s0,s1]",
+	// 		n: "return n * 10",
+	// 		nn: "return n0 - n1",
+	// 		b: "return !b",
+	// 		bb: "return b0 && b1",
+	// 		aaa: function(a0,a1,a2) {
+	// 			var a = [];
+	// 			a0.forEach(function(e) { a.push(e) });
+	// 			a1.forEach(function(e) { a.push(e) });
+	// 			a2.forEach(function(e) { a.push(e) });
+	// 			return a;
+	// 		},
+	// 		ooo: function(o0,o1,o2) {
+	// 			var a = [];
+	// 			Object.keys(o0).forEach(function(e) { a.push(e) });
+	// 			Object.keys(o1).forEach(function(e) { a.push(e) });
+	// 			Object.keys(o2).forEach(function(e) { a.push(e) });
+	// 			return a;
+	// 		},
+	// 		sfr: function(str,fn,re) {
+	// 			return str.replace(re,fn);
+	// 		},
+	// 	},true);
+	// 	assert.deepEqual(method(),"zero arguments");
+	// 	assert.deepEqual(method(null,1,"a",{},[]),"five arguments");
+	// 	assert.deepEqual(method("string"),"string");
+	// 	assert.deepEqual(method("string","string"),["string","string"]);
+	// 	assert.deepEqual(method(10),100);
+	// 	assert.deepEqual(method(10,5),5);
+	// 	assert.deepEqual(method(true),false);
+	// 	assert.deepEqual(method(true,false),false);
+	// 	assert.deepEqual(method(true,true),true);
+	// 	assert.deepEqual(method(["a","b"],["c"],["d","e"]),["a","b","c","d","e"]);
+	// 	assert.deepEqual(method({a:"",b:""},{c:""},{d:"",e:""}),["a","b","c","d","e"]);
+	// 	assert.deepEqual(method("string",function(ch){return ch.charCodeAt(0)},/s|t/g),"115116ring");
+	// 	assert.throws(function() { method([]) },ReferenceError);
+	// });
 
 	// @class
 	it("class",function() {
