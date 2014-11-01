@@ -41,6 +41,7 @@ factory.require("./lib/class.js");
 factory.require("./lib/extend.js");
 factory.require("./lib/merge.js");
 factory.require("./lib/clone.js");
+factory.require("./lib/stub.js");
 
 // - -------------------------------------------------------------------- - //
 

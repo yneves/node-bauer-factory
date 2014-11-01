@@ -5,11 +5,13 @@
 **  Distributed on <http://github.com/yneves/node-bauer-factory>
 */
 // - -------------------------------------------------------------------- - //
+// - Libs
 
 var factory = require("../");
 var assert = require("assert");
 
 // - -------------------------------------------------------------------- - //
+// - Tests
 
 describe("Factory.Method",function() {
 

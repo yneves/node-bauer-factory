@@ -5,34 +5,31 @@
 **  Distributed on <http://github.com/yneves/node-bauer-factory>
 */
 // - -------------------------------------------------------------------- - //
-// - libs
+// - Libs
 
-var lib = {
-	factory: require("../"),
-};
-
+var factory = require("../");
 var assert = require("assert");
 
 // - -------------------------------------------------------------------- - //
-// - Factory
+// - Tests
 
 describe("Factory",function() {
 
 	// @toArray
 	it("toArray",function() {
-		assert.throws(function() { lib.factory.toArray() });
-		assert.deepEqual(lib.factory.toArray(function(a,b) {}),[]);
-		assert.deepEqual(lib.factory.toArray(true),[]);
-		assert.deepEqual(lib.factory.toArray("ab"),["a","b"]);
-		assert.deepEqual(lib.factory.toArray({ 0: "a", 1: "b", length: 2 }),["a","b"]);
-		assert.notDeepEqual(lib.factory.toArray({ 0: "a", 1: "b" }),["a","b"]);
-		assert.deepEqual(lib.factory.toArray(arguments),[]);
-		assert.notStrictEqual(lib.factory.toArray(arguments),[]);
+		assert.throws(function() { factory.toArray() });
+		assert.deepEqual(factory.toArray(function(a,b) {}),[]);
+		assert.deepEqual(factory.toArray(true),[]);
+		assert.deepEqual(factory.toArray("ab"),["a","b"]);
+		assert.deepEqual(factory.toArray({ 0: "a", 1: "b", length: 2 }),["a","b"]);
+		assert.notDeepEqual(factory.toArray({ 0: "a", 1: "b" }),["a","b"]);
+		assert.deepEqual(factory.toArray(arguments),[]);
+		assert.notStrictEqual(factory.toArray(arguments),[]);
 	});
 
 	// // @method-embed
 	// it("method-embed",function() {
-	// 	var method = lib.factory.method({
+	// 	var method = factory.method({
 	// 		0: "return 'zero arguments'",
 	// 		5: "return 'five arguments'",
 	// 		s: "return s",
@@ -74,60 +71,9 @@ describe("Factory",function() {
 	// 	assert.throws(function() { method([]) },ReferenceError);
 	// });
 
-	// @class
-	it("class",function() {
-		var cls = lib.factory.class({
-			inherits: "events.EventEmitter",
-			constructor: function(a,b) {
-				this._a = a;
-				this._b = b;
-			},
-			one: function() { return this._a },
-			two: function() { return this._b },
-			method: {
-				s: "return s",
-				n: "return n * n",
-			},
-		});
-		assert.deepEqual(lib.factory.isFunction(cls),true);
-		assert.deepEqual(lib.factory.isObject(cls.prototype),true);
-		assert.deepEqual(lib.factory.isFunction(cls.prototype.one),true);
-		assert.deepEqual(lib.factory.isFunction(cls.prototype.two),true);
-		assert.deepEqual(lib.factory.isFunction(cls.prototype.method),true);
-		assert.deepEqual(Object.keys(cls.prototype),["one","two","method"]);
-		var obj = new cls(1,2);
-		assert.deepEqual(obj,{ _a: 1, _b: 2, domain: null, _events: {}, _maxListeners: 10 });
-		assert.deepEqual(obj.one(),1);
-		assert.deepEqual(obj.two(),2);
-		assert.deepEqual(obj.method("string"),"string");
-		assert.deepEqual(obj.method(10),100);
-	});
-
-	// @object
-	it("object",function() {
-		var obj = lib.factory.object({
-			inherits: "events.EventEmitter",
-			constructor: function() {
-				this._a = 1;
-				this._b = 2;
-			},
-			one: function() { return this._a },
-			two: function() { return this._b },
-			method: {
-				s: "return s",
-				n: "return n * n",
-			},
-		});
-		assert.deepEqual(obj,{ _a: 1, _b: 2, domain: null, _events: {}, _maxListeners: 10 });
-		assert.deepEqual(obj.one(),1);
-		assert.deepEqual(obj.two(),2);
-		assert.deepEqual(obj.method("string"),"string");
-		assert.deepEqual(obj.method(10),100);
-	});
-
 	// @extend-factory
 	it("extend-factory",function() {
-		lib.factory.extend({
+		factory.extend({
 			one: function() { return 1 },
 			two: function() { return 2 },
 			sig: {
@@ -135,25 +81,25 @@ describe("Factory",function() {
 				n: "return n * n",
 			},
 		});
-		assert.deepEqual(lib.factory.isFunction(lib.factory.one),true);
-		assert.deepEqual(lib.factory.isFunction(lib.factory.two),true);
-		assert.deepEqual(lib.factory.isFunction(lib.factory.sig),true);
-		assert.deepEqual(lib.factory.one(),1);
-		assert.deepEqual(lib.factory.two(),2);
-		assert.deepEqual(lib.factory.sig("string"),"string");
-		assert.deepEqual(lib.factory.sig(10),100);
+		assert.deepEqual(factory.isFunction(factory.one),true);
+		assert.deepEqual(factory.isFunction(factory.two),true);
+		assert.deepEqual(factory.isFunction(factory.sig),true);
+		assert.deepEqual(factory.one(),1);
+		assert.deepEqual(factory.two(),2);
+		assert.deepEqual(factory.sig("string"),"string");
+		assert.deepEqual(factory.sig(10),100);
 	});
 
 	// @extend-class
 	it("extend-class",function() {
-		var cls = lib.factory.class({
+		var cls = factory.class({
 			inherits: "events.EventEmitter",
 			constructor: function(a,b) {
 				this._a = a;
 				this._b = b;
 			},
 		});
-		lib.factory.extend(cls,{
+		factory.extend(cls,{
 			one: function() { return 1 },
 			two: function() { return 2 },
 			method: {
@@ -161,11 +107,11 @@ describe("Factory",function() {
 				n: "return n * n",
 			},
 		});
-		assert.deepEqual(lib.factory.isFunction(cls),true);
-		assert.deepEqual(lib.factory.isObject(cls.prototype),true);
-		assert.deepEqual(lib.factory.isFunction(cls.prototype.one),true);
-		assert.deepEqual(lib.factory.isFunction(cls.prototype.two),true);
-		assert.deepEqual(lib.factory.isFunction(cls.prototype.method),true);
+		assert.deepEqual(factory.isFunction(cls),true);
+		assert.deepEqual(factory.isObject(cls.prototype),true);
+		assert.deepEqual(factory.isFunction(cls.prototype.one),true);
+		assert.deepEqual(factory.isFunction(cls.prototype.two),true);
+		assert.deepEqual(factory.isFunction(cls.prototype.method),true);
 		assert.deepEqual(Object.keys(cls.prototype),["one","two","method"]);
 		var obj = new cls(1,2);
 		assert.deepEqual(obj,{ _a: 1, _b: 2, domain: null, _events: {}, _maxListeners: 10 });
@@ -177,18 +123,18 @@ describe("Factory",function() {
 
 	// @extend-object
 	it("extend-object",function() {
-		var obj = lib.factory.extend({a:1},{b:2,c:3});
+		var obj = factory.extend({a:1},{b:2,c:3});
 		assert.deepEqual(obj,{a:1,b:2,c:3});
-		lib.factory.extend(obj,{a:2});
+		factory.extend(obj,{a:2});
 		assert.deepEqual(obj,{a:2,b:2,c:3});
-		lib.factory.extend(obj,{a:null},{b:null},{c:null});
+		factory.extend(obj,{a:null},{b:null},{c:null});
 		assert.deepEqual(obj,{a:null,b:null,c:null});
 	});
 
 	// @clone-array
 	it("clone-array",function() {
 		var arr = ["a","b","c",[1,2,3],{a:1,b:2}];
-		var clone = lib.factory.clone(arr);
+		var clone = factory.clone(arr);
 		assert.deepEqual(clone,arr);
 		assert.notStrictEqual(clone,arr);
 	});
@@ -196,7 +142,7 @@ describe("Factory",function() {
 	// @clone-object
 	it("clone-object",function() {
 		var obj = {a:1,b:2,c:["a","b","c"]};
-		var clone = lib.factory.clone(obj);
+		var clone = factory.clone(obj);
 		assert.deepEqual(clone,obj);
 		assert.notStrictEqual(clone,obj);
 	});
@@ -204,7 +150,7 @@ describe("Factory",function() {
 	// @method-error
 	it("method-error",function() {
 		var error = new Error("testing factory");
-		var method = lib.factory.method(error);
+		var method = factory.method(error);
 		assert.throws(method,/testing factory/);
 	});
 
@@ -213,7 +159,7 @@ describe("Factory",function() {
 		var repeat = 0;
 		var unique = {};
 		for (var i = 0; i < 10; i++) {
-			var guid = lib.factory.guid();
+			var guid = factory.guid();
 			assert.ok(/[a-z0-9]{32}/.test(guid));
 			if (unique[guid]) {
 				repeat++;
@@ -228,7 +174,7 @@ describe("Factory",function() {
 	it("merge",function() {
 		var one = { a: "a", b: "b", c: "c", d: { d1: "d1", d2: "d2" } };
 		var two = { b: { b1: "b1", b2: "b2" }, c: "ccc", d: { d1: "d111" } };
-		var merged = lib.factory.merge(one,two);
+		var merged = factory.merge(one,two);
 		assert.strictEqual(one,merged);
 		assert.deepEqual(one,{
 			a: "a",
@@ -243,7 +189,7 @@ describe("Factory",function() {
 		var one = { a: "a", b: "b", c: "c", d: { d1: "d1", d2: "d2" } };
 		var two = { b: { b1: "b1", b2: "b2" }, c: "ccc", d: { d1: "d111" } };
 		var three = { b: { b2: "b222"}, c: { c1: "c1", c2: "c2" } };
-		var merged = lib.factory.merge(one,two,three);
+		var merged = factory.merge(one,two,three);
 		assert.strictEqual(one,merged);
 		assert.deepEqual(one,{
 			a: "a",
