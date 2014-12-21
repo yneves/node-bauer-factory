@@ -1,5 +1,5 @@
 node-bauer-factory
-================
+========================
 
 General utilities for nodejs.
 
@@ -17,9 +17,8 @@ var factory = require("bauer-factory");
 
 ## .type
 
-Returned value can be string, number, boolean, date, regexp, error, array, object, arguments, undefined or function.
+Returned value can be string, number, boolean, date, regexp, error, array, object, arguments, null, undefined or function.
 
-* Null is considered to be of type `undefined`.
 
 ```js
 // returns type of given argument
@@ -31,7 +30,23 @@ var type = factory.type(arg);
 ```js
 factory.isNull(arg)
 // same as
-factory.type(arg) == "undefined"
+factory.type(arg) === "null"
+```
+
+## .isDefined
+
+```js
+factory.isDefined(arg)
+// same as
+factory.type(arg) !== "undefined"
+```
+
+## .isUndefined
+
+```js
+factory.isUndefined(arg)
+// same as
+factory.type(arg) === "undefined"
 ```
 
 ## .isDate
@@ -39,7 +54,7 @@ factory.type(arg) == "undefined"
 ```js
 factory.isDate(arg)
 // same as
-factory.type(arg) == "date"
+factory.type(arg) === "date"
 ```
 
 ## .isError
@@ -47,7 +62,7 @@ factory.type(arg) == "date"
 ```js
 factory.isError(arg)
 // same as
-factory.type(arg) == "error"
+factory.type(arg) === "error"
 ```
 
 ## .isBoolean
@@ -55,7 +70,7 @@ factory.type(arg) == "error"
 ```js
 factory.isBoolean(arg)
 // same as
-factory.type(arg) == "boolean"
+factory.type(arg) === "boolean"
 ```
 
 ## .isArray
@@ -63,7 +78,7 @@ factory.type(arg) == "boolean"
 ```js
 factory.isArray(arg)
 // same as
-factory.type(arg) == "array"
+factory.type(arg) === "array"
 ```
 
 ## .isNumber
@@ -71,7 +86,7 @@ factory.type(arg) == "array"
 ```js
 factory.isNumber(arg)
 // same as
-factory.type(arg) == "number"
+factory.type(arg) === "number"
 ```
 
 ## .isString
@@ -79,7 +94,7 @@ factory.type(arg) == "number"
 ```js
 factory.isString(arg)
 // same as
-factory.type(arg) == "string"
+factory.type(arg) === "string"
 ```
 
 ## .isObject
@@ -87,7 +102,7 @@ factory.type(arg) == "string"
 ```js
 factory.isObject(arg)
 // same as
-factory.type(arg) == "object"
+factory.type(arg) === "object"
 ```
 
 ## .isRegExp
@@ -95,7 +110,7 @@ factory.type(arg) == "object"
 ```js
 factory.isRegExp(arg)
 // same as
-factory.type(arg) == "regexp"
+factory.type(arg) === "regexp"
 ```
 
 ## .isFunction
@@ -103,7 +118,7 @@ factory.type(arg) == "regexp"
 ```js
 factory.isFunction(arg)
 // same as
-factory.type(arg) == "function"
+factory.type(arg) === "function"
 ```
 
 ## .isArguments
@@ -111,17 +126,7 @@ factory.type(arg) == "function"
 ```js
 factory.isArguments(arg)
 // same as
-factory.type(arg) == "arguments"
-```
-
-## .toArray
-
-Coerces given argument into array.
-
-```js
-factory.toArray(arg)
-// same as
-Array.prototype.slice.call(arg)
+factory.type(arg) === "arguments"
 ```
 
 ## .extend
