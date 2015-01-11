@@ -13,7 +13,7 @@ var assert = require("assert");
 // - -------------------------------------------------------------------- - //
 // - Tests
 
-describe("Factory",function() {
+describe("factory",function() {
 
 	// @toArray
 	it("toArray",function() {

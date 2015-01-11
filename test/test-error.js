@@ -4,27 +4,23 @@
 **  Licensed under The MIT License <http://opensource.org/licenses/MIT>
 **  Distributed on <http://github.com/yneves/node-bauer-factory>
 */
+// - -------------------------------------------------------------------- - //
+// - Libs
+
+var factory = require("../");
+var assert = require("assert");
 
 // - -------------------------------------------------------------------- - //
-// - Exports
+// - Tests
 
-var factory = module.exports = {};
+describe("factory.error",function() {
 
-// - -------------------------------------------------------------------- - //
+  it("error",function() {
+    var CustomError = factory.createError("CustomError");
+    assert.ok(new CustomError() instanceof Error);
+    assert.strictEqual(new CustomError().name,"CustomError");
+  });
 
-// .resolve(name)
-factory.resolve = function(name) {
-  var parts = name.split(".");
-  var mod;
-  while (parts.length > 0) {
-    var part = parts.shift();
-    if (mod) {
-      mod = mod[part];
-    } else {
-      mod = require(part);
-    }
-  }
-  return mod;
-};
+});
 
 // - -------------------------------------------------------------------- - //

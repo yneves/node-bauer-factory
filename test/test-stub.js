@@ -13,7 +13,7 @@ var assert = require("assert");
 // - -------------------------------------------------------------------- - //
 // - Tests
 
-describe("Factory.Stub",function() {
+describe("factory.stub",function() {
 
   it("called",function() {
     var stub = factory.createStub();

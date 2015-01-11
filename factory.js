@@ -35,9 +35,10 @@ factory.require = function(file) {
 
 factory.require("./lib/type.js");
 factory.require("./lib/method.js");
-factory.require("./lib/resolve.js");
 factory.require("./lib/inherits.js");
+factory.require("./lib/property.js");
 factory.require("./lib/class.js");
+factory.require("./lib/error.js");
 factory.require("./lib/extend.js");
 factory.require("./lib/merge.js");
 factory.require("./lib/clone.js");

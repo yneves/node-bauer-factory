@@ -13,7 +13,7 @@ var assert = require("assert");
 // - -------------------------------------------------------------------- - //
 // - Tests
 
-describe("Factory.Class",function() {
+describe("factory.class",function() {
 
   it("class",function() {
     var cls = factory.class({
@@ -64,10 +64,17 @@ describe("Factory.Class",function() {
     assert.deepEqual(obj.method(10),100);
   });
 
-  it("error",function() {
-    var CustomError = factory.createError("CustomError");
-    assert.ok(new CustomError() instanceof Error);
-    assert.strictEqual(new CustomError().name,"CustomError");
+  it("property",function() {
+    var cls = factory.class({
+      getProp: function() { return this.prop },
+      prop: factory.createProperty({
+        set: function(value) { this.value = value * 2 },
+      }),
+    });
+    var obj = new cls();
+    obj.prop = 2;
+    assert.strictEqual(obj.prop,4);
+    assert.strictEqual(obj.getProp(),4);
   });
 
 });

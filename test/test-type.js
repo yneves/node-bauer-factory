@@ -13,7 +13,7 @@ var assert = require("assert");
 // - -------------------------------------------------------------------- - //
 // - Tests
 
-describe("Factory.Type",function() {
+describe("factory.type",function() {
 
   // @type
   it("type",function() {
