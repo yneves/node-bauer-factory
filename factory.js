@@ -6,15 +6,29 @@
 */
 
 // - -------------------------------------------------------------------- - //
+// - Libs
+
+var modules = [
+	require("./lib/type.js"),
+	require("./lib/method.js"),
+	require("./lib/inherits.js"),
+	require("./lib/property.js"),
+	require("./lib/class.js"),
+	require("./lib/error.js"),
+	require("./lib/extend.js"),
+	require("./lib/merge.js"),
+	require("./lib/clone.js"),
+	require("./lib/stub.js"),
+];
+
+// - -------------------------------------------------------------------- - //
 // - Exports
 
 var factory = module.exports = { cls: {} };
 
 // - -------------------------------------------------------------------- - //
 
-// .require(module)
-factory.require = function(file) {
-	var mod = require(file);
+modules.forEach(function(mod) {
 	var keys = Object.keys(mod);
 	var length = keys.length;
 	for (var i = 0; i < length; i++) {
@@ -29,20 +43,7 @@ factory.require = function(file) {
 			factory[key] = mod[key];
 		}
 	}
-};
-
-// - -------------------------------------------------------------------- - //
-
-factory.require("./lib/type.js");
-factory.require("./lib/method.js");
-factory.require("./lib/inherits.js");
-factory.require("./lib/property.js");
-factory.require("./lib/class.js");
-factory.require("./lib/error.js");
-factory.require("./lib/extend.js");
-factory.require("./lib/merge.js");
-factory.require("./lib/clone.js");
-factory.require("./lib/stub.js");
+});
 
 // - -------------------------------------------------------------------- - //
 
