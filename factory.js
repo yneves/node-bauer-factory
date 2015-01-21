@@ -19,6 +19,7 @@ var modules = [
 	require("./lib/merge.js"),
 	require("./lib/clone.js"),
 	require("./lib/stub.js"),
+	require("./lib/eval.js"),
 ];
 
 // - -------------------------------------------------------------------- - //
