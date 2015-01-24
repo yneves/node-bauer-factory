@@ -15,30 +15,43 @@ var assert = require("assert");
 
 describe("factory.eval",function() {
 
-  it("number",function() {
-    var evaluator = factory.createEvaluator("a + b + 3");
-    var result = evaluator.evaluate({ a: 1, b: 2 });
-    assert.strictEqual(result,6);    
-  });
-  
-  it("false",function() {
-    var evaluator = factory.createEvaluator("(a == b) || (c == d)");
-    var result = evaluator.evaluate({ a: 1, b: 2, c: 3, d: 4 });
-    assert.strictEqual(result,false);
-  });
-  
-  it("true",function() {
-    var evaluator = factory.createEvaluator("(a == b) || (c == d)");
-    var result = evaluator.evaluate({ a: 1, b: 2, c: 3, d: 3 });
-    assert.strictEqual(result,true);
-  });
-  
-  it("setVars",function() {
-    var evaluator = factory.createEvaluator("(a == b) || (c == d)");
-    evaluator.setVars({ c: 3, d: 3 });
-    var result = evaluator.evaluate({ a: 1, b: 2 });
-    assert.strictEqual(result,true);
-  });
+    it("number",function() {
+        var evaluator = factory.createEvaluator("a + b + 3");
+        var result = evaluator.evaluate({ a: 1, b: 2 });
+        assert.strictEqual(result,6);    
+    });
+
+    it("false",function() {
+        var evaluator = factory.createEvaluator("(a == b) || (c == d)");
+        var result = evaluator.evaluate({ a: 1, b: 2, c: 3, d: 4 });
+        assert.strictEqual(result,false);
+    });
+
+    it("true",function() {
+        var evaluator = factory.createEvaluator("(a == b) || (c == d)");
+        var result = evaluator.evaluate({ a: 1, b: 2, c: 3, d: 3 });
+        assert.strictEqual(result,true);
+    });
+
+    it("setVars",function() {
+        var evaluator = factory.createEvaluator("(a == b) || (c == d)");
+        evaluator.setVars({ c: 3, d: 3 });
+        var result = evaluator.evaluate({ a: 1, b: 2 });
+        assert.strictEqual(result,true);
+    });
+
+    it("dots",function() {
+        var evaluator = factory.createEvaluator("(a.aa == b.bb) || (c.cc == d.dd)");
+        evaluator.setVars({ c: { cc: 3 }, d: { dd: 3 } });
+        var result = evaluator.evaluate({ a: { aa: 1 }, b: { bb: 2 } });
+        assert.strictEqual(result,true);
+    });
+    
+    it("isEvaluator",function() {
+        var evaluator = factory.createEvaluator("(a.aa == b.bb) || (c.cc == d.dd)");        
+        assert.strictEqual(factory.isEvaluator(evaluator),true);
+        assert.strictEqual(factory.isEvaluator(assert),false);
+    });
 
 });
 
