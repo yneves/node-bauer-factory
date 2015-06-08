@@ -129,44 +129,12 @@ factory.isArguments(arg)
 factory.type(arg) === "arguments"
 ```
 
-## .extend
-
-Performs a superficial extension on objects or classes.
-
-```js
-// extends the original object and returns it
-factory.extend(original,object0,object1,object2)
-```
-
-```js
-// calling with one argument extends factory itself
-// methods is an object having key as the method name
-// value is passed through factory.method
-factory.extend(methods)
-```
-
-```js
-// calling with a function as first argument extends its prototype
-// methods is an object having key as the method name
-// value is passed through factory.method
-factory.extend(class,methods)
-```
-
-## .clone
-
-Returns an equally deep copy of given argument. Works with arrays and objects, values of any other type are bypassed.  
-
-```js
-// deepEqual && notStrictDeepEqual
-factory.clone(arg)
-```
-
-## .method
+## .createMethod
 
 Accepts an object containing types/lengths as keys and values as functions.
 
 ```js
-var func = factory.method({
+var func = factory.createMethod({
 	0: function() {}, // executed if called with zero arguments
 	s: function(s) {}, // executed if called with one string
 	sf: function(s) {}, // executed if called with a string and a function
@@ -177,7 +145,7 @@ var func = factory.method({
 Letters are taken as the first character of the argument's type as returned by `factory.type`. Any combination can be used to route the function execution. This takes priority over argument's length routing.
 
 ```js
-var func = factory.method({
+var func = factory.createMethod({
 	o: function() {}, // executed if called with object
 	a: function(s) {}, // executed if called with array or arguments
 	sffb: function(s,f0,f1,b) {}, // executed if called with a string, two functions and a boolean
@@ -187,7 +155,7 @@ var func = factory.method({
 Numbers are taken as the length of the arguments object. Nested rules are supported.
 
 ```js
-var func = factory.method({
+var func = factory.createMethod({
 	5: { // executed if called with five arguments
 		sssss: function() {}, // five strings
 		assss: function() {}, // one array and four strings
@@ -199,7 +167,7 @@ var func = factory.method({
 Underscore holds the default code. If no rule is matched and there's no `_` throws an `ReferenceError`.
 
 ```js
-var func = factory.method({
+var func = factory.createMethod({
 	_: function() {},
 });
 ```
@@ -207,7 +175,7 @@ var func = factory.method({
 Strings can be used as code. They are converted to functions internally with the defined arguments.
 
 ```js
-var func = factory.method({
+var func = factory.createMethod({
 	s: "return this.get(s)", // the given string can be refered as 's'
 	ss: "return this.both(s0,s1)", // if it's two strings, just add the index
 	f: "this.on('ready',f)", // easy to define aliases
@@ -217,23 +185,23 @@ var func = factory.method({
 If the code does not use any external vars its possible to optimize the generated function by passing a second argument as `true`.
 
 ```js
-var optimized = factory.method({
+var optimized = factory.createMethod({
 	s: "return this.get(s)",
 	ss: "return this.both(s0,s1)",
 	f: "this.on('ready',f)",
 },true); // tell factory.method that this function does not use any external var
 ```
 
-## .class
+## .createClass
 
 Creates a class with given methods, constructor and inheritance.
 
 ```js
-var Bauer = factory.class({
+var Bauer = factory.createClass({
 
 	// requires 'events' and inherits EventEmitter from it
 	// also accepts functions
-	inherits: "events.EventEmitter",
+	inherits: require("events").EventEmitter,
 
 	// called when new Bauer() is executed
 	// it can also be routed by factory.method if needed
@@ -264,17 +232,17 @@ jack.tortureSuspects();
 jack.doWhateverIsNecessary();
 ```
 
-## .object
+## .createObject
 
 Creates a class just like .class does and returns an instance of it.
 
 ```js
-// accepts same arguments as .class
-var jack = factory.object({
+// accepts same arguments as .createClass
+var jack = factory.createObject({
 
 	// requires 'events' and inherits EventEmitter from it
 	// also accepts functions
-	inherits: "events.EventEmitter",
+	inherits: require("events").EventEmitter,
 
 	// called when new Bauer() is executed
 	// it can also be routed by factory.method if needed
@@ -295,12 +263,4 @@ var jack = factory.object({
 	doWhateverIsNecessary: function() {},
 
 });
-```
-
-## .guid
-
-Generates a globally unique id.
-
-```js
-var uid = factory.guid();
 ```

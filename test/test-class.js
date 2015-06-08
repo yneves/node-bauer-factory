@@ -64,19 +64,6 @@ describe("factory.class",function() {
     assert.deepEqual(obj.method(10),100);
   });
 
-  it("property",function() {
-    var cls = factory.class({
-      getProp: function() { return this.prop },
-      prop: factory.createProperty({
-        set: function(value) { this.value = value * 2 },
-      }),
-    });
-    var obj = new cls();
-    obj.prop = 2;
-    assert.strictEqual(obj.prop,4);
-    assert.strictEqual(obj.getProp(),4);
-  });
-
 });
 
 // - -------------------------------------------------------------------- - //

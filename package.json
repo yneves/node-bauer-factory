@@ -1,8 +1,8 @@
 {
   "name": "bauer-factory",
-  "version": "1.2.9",
+  "version": "2.0.0",
   "description": "General utilities for nodejs.",
-  "keywords": ["class","method","type","extend","clone","signature","function","object","create"],
+  "keywords": ["class","method","type","signature","overload","function","object","create"],
   "license": "MIT",
   "homepage": "https://github.com/yneves/node-bauer-factory",
   "author": {
@@ -20,5 +20,5 @@
   "devDependencies": {
     "mocha": ">=1.0.0"
   },
-  "main": "factory.js"
+  "main": "lib/index.js"
 }
