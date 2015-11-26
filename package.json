@@ -1,16 +1,25 @@
 {
   "name": "bauer-factory",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "General utilities for nodejs.",
-  "keywords": ["class","method","type","signature","overload","function","object","create"],
+  "keywords": [
+    "class",
+    "method",
+    "type",
+    "signature",
+    "overload",
+    "function",
+    "object",
+    "create"
+  ],
   "license": "MIT",
   "homepage": "https://github.com/yneves/node-bauer-factory",
   "author": {
     "name": "Yuri Neves Silveira",
     "url": "http://yneves.com/",
-    "email": "npm@yneves.com"
+    "email": "yurinevessilveira@gmail.com"
   },
-  "repository":{
+  "repository": {
     "type": "git",
     "url": "https://github.com/yneves/node-bauer-factory.git"
   },
@@ -18,7 +27,7 @@
     "test": "mocha"
   },
   "devDependencies": {
-    "mocha": ">=1.0.0"
+    "mocha": "^2.3.4"
   },
   "main": "lib/index.js"
 }
