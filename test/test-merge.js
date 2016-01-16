@@ -59,6 +59,50 @@ describe("factory.merge",function() {
     
   });
   
+  it("extend",function() {
+    
+    var extended = factory.extend({
+      one: 1,
+      two: 2,
+      three: 3
+    },{
+      one: 2,
+      two: 3,
+      three: 4,
+      four: 5
+    },{
+      one: 3,
+      two: 4,
+      three: 5,
+      four: 6,
+      five: { one: 1, two: 2 }
+    },{
+      five: { one: 2, two: 3, three: 4 }
+    },{
+      five: { four: { one: 1, two: 2} }
+    },{
+      five: { four: { one: 2, three: 3 }}
+    });
+    
+    assert.deepEqual(extended,{
+      one: 3,
+      two: 4,
+      three: 5,
+      four: 6,
+      five: {
+        one: 2,
+        two: 3,
+        three: 4,
+        four: {
+          one: 2,
+          two: 2,
+          three: 3
+        }
+      }
+    });
+    
+  });
+  
 });
 
 // - -------------------------------------------------------------------- - //

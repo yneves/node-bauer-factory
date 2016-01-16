@@ -9,6 +9,7 @@
 
 var factory = require("../");
 var assert = require("assert");
+var events = require("events");
 
 // - -------------------------------------------------------------------- - //
 // - Tests
@@ -17,7 +18,7 @@ describe("factory.class",function() {
 
   it("class",function() {
     var cls = factory.class({
-      inherits: "events.EventEmitter",
+      inherits: events.EventEmitter,
       constructor: function(a,b) {
         this._a = a;
         this._b = b;
@@ -36,7 +37,7 @@ describe("factory.class",function() {
     assert.deepEqual(factory.isFunction(cls.prototype.method),true);
     assert.deepEqual(Object.keys(cls.prototype),["one","two","method"]);
     var obj = new cls(1,2);
-    assert.deepEqual(obj,{ _a: 1, _b: 2, domain: null, _events: {}, _maxListeners: 10 });
+    assert.deepEqual(obj,{ _a: 1, _b: 2, domain: null, _events: {}, _eventsCount: 0, _maxListeners: undefined });
     assert.deepEqual(obj.one(),1);
     assert.deepEqual(obj.two(),2);
     assert.deepEqual(obj.method("string"),"string");
@@ -45,7 +46,7 @@ describe("factory.class",function() {
 
   it("object",function() {
     var obj = factory.object({
-      inherits: "events.EventEmitter",
+      inherits: events.EventEmitter,
       constructor: function() {
         this._a = 1;
         this._b = 2;
@@ -57,7 +58,7 @@ describe("factory.class",function() {
         n: "return n * n",
       },
     });
-    assert.deepEqual(obj,{ _a: 1, _b: 2, domain: null, _events: {}, _maxListeners: 10 });
+    assert.deepEqual(obj,{ _a: 1, _b: 2, domain: null, _events: {}, _eventsCount: 0, _maxListeners: undefined });
     assert.deepEqual(obj.one(),1);
     assert.deepEqual(obj.two(),2);
     assert.deepEqual(obj.method("string"),"string");
